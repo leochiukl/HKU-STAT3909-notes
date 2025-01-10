@@ -1,0 +1,287 @@
+\section{Policy Values II}
+\label{sect:policy-values}
+\begin{enumerate}
+\item Building upon the knowledge of policy values learnt in STAT3901 (see the
+section titled ``Policy Values I'' in the
+\href{https://leochiukl.github.io/files/stat3901-study-notes.pdf}{STAT3901
+study notes}), here we will explore some further topics:
+\begin{itemize}
+\item \emph{Continuous policy value recursions:} For each of life insurance and
+life annuity, we have explored the \emph{annual}, \emph{\(1/m\)thly}, and
+\emph{continuous} cases in STAT3901. But for policy value recursions, we have
+only discussed the \emph{annual} and \emph{\(1/m\)thly} cases. The continuous
+case is to be discussed here.
+
+\item \emph{Asset shares:} In STAT3901 we have learnt the concept of
+\emph{retrospective} policy value, which can be interpreted as the share
+available in the \emph{expected} ``pool of money'' \faIcon{at} time \(t\) per
+\emph{expected} survivor \faIcon{at} time \(t\).  Here, we are going to work
+with \emph{actual} quantities instead of those expected ones. In other words,
+we consider the \underline{share} available in the \emph{actual} ``pool of
+money'' (the \underline{asset}) \faIcon{at} time \(t\) per \emph{actual}
+survivor \faIcon{at} time \(t\).
+
+\item \emph{Practical issues:} Some practical issues about policy values will
+be discussed, namely:
+\begin{itemize}
+\item \emph{dealing with policy alterations:} A policyholder may be given the
+flexibility to \underline{alter} his policy, e.g., change from a term life
+insurance to a whole life insurance. The concept of policy value will be used
+in determining the suitable adjustments needed on the benefit amounts.
+\item \emph{negative policy value:} While negative policy value appears to
+suggest that there would be expected future \emph{gain}, prudent actuaries
+would avoid assigning a positive value to the policy. We will study why that is
+the case and some pitfalls of having negative policy value.
+\end{itemize}
+\end{itemize}
+\end{enumerate}
+\subsection{Continuous Policy Value Recursions: Thiele's Differential Equation}
+\begin{enumerate}
+\item Recall the \(1/m\)thly version of policy value recursion in the net
+amount at risk (NAAR) form:
+\[
+\underset{\text{(what you have)}}{(\Vx[t]{}[]+G_t-e_t)(1+i)^{\frac{1}{m}}}
+=\underset{\text{(what you need)}}
+{\Vx[t+\frac{1}{m}]{}[]
++\qx[\frac{1}{m}]{x+t}\overset{\text{(NAAR)}}{\qty(S_{t+\frac{1}{m}}+E_{t+\frac{1}{m}}-\Vx[t+\frac{1}{m}]{}[])}
+}
+\]
+(\(t=0,1/m,2/m,\dotsc\)).
+
+\begin{center}
+\begin{tikzpicture}
+\draw[] (0,0) rectangle (2,1);
+\node[] () at (1, 1.4) {\(\Vx[t]{}\)};
+\draw[->, ForestGreen, line width=0.3mm] (0.6,-0.5) to (0.6,0.2);
+\node[ForestGreen] () at (0.6,-0.8) {\(G_t\)};
+\draw[->, red, line width=0.3mm] (1.4,0.2) to (1.4,-0.5);
+\node[red] () at (1.4,-0.8) {\(e_t\)};
+\draw[-Latex, blue] (1,0.5) to[bend left] node[midway, auto]{\(\times (1+i)^{1/m}\)} (7,0.5);
+\draw[] (4,-0.5) rectangle (10,1);
+\node[] () at (11.5,0.25) {(what you have)};
+\node[] () at (7,0.25) {\((\Vx[t]{}+G_t-e_t)(1+i)^{1/m}\)};
+\node[rotate=90] () at (7,-1) {\faIcon{equals}};
+\draw[] (4,-3) rectangle (8,-1.5);
+\node[] () at (11.5,-2.25) {(what you need)};
+\node[] () at (6,-2.25) {\(\Vx[t+\frac{1}{m}]{}[]\)};
+\draw[] (8,-3) rectangle (10,-1.5);
+\node[text width=2cm, violet] () at (9.1,-2.25) {extra for \faIcon{skull} (expected)};
+\end{tikzpicture}
+\end{center}
+We can then observe that changes in policy values are influenced by multiple
+factors: (i) \blc{interest}, (ii) \gc{premiums} \& \rc{expenses}, and (iii)
+\vc{\(\text{NAAR}\times \text{death prob.}\)} (it reduces the amount in ``what
+we have'' that can be ``sent'' to the policy value \(\Vx[t+\frac{1}{m}]{}[]\)).
+
+\item \label{it:thieles-diffeq} Now, let us state the recursive formula for
+policy values in the continuous case, which is known as the \defn{Thiele's
+differential equation}:
+\[
+\boxed{\dv{}{t}\Vx[t]{}[]=\Vx[t]{}[]\delta_t+(G_t-e_t)
+-\underset{\text{(NAAR)}}{(S_t+E_t-\Vx[t]{}[])}\mu_{x+t}}
+\]
+where:
+\begin{itemize}
+\item \(G_t\) and \(e_t\) denote the time-\(t\) \emph{rate} of premiums and
+renewal expenses respectively;
+\item \(S_t\) and \(E_t\) denote the time-\(t\) sum insured and settlement
+expense respectively.
+\end{itemize}
+\begin{remark}
+\item Here we are in the fully continuous case, and we assume that there is no
+initial expense.
+\item Loosely, the differential equation relates ``\(\Vx[t]{}[]\) and
+\(\Vx[t+\dd{t}]{}[]\)'', hence it is a ``continuous recursion''.
+\end{remark}
+
+While we can find some ``familiar'' terms like \(G_t-e_t\) and
+\(S_t+E_t-\Vx[t]{}[]\) (NAAR) in the equation, it is not very clear what
+intuitive meaning this differential equation has. To understand it more
+intuitively, let us integrate both sides from \(0\) to a positive value \(s\),
+which gives
+\[
+\Vx[s]{}[]-\Vx[0]{}[]=\int_{0}^{s}\dv{}{t}\Vx[t]{}[]\dd{t}
+=\int_{0}^{s}\qty[\Vx[t]{}[]\delta_t+(G_t-e_t)
+-(S_t+E_t-\Vx[t]{}[])\mu_{x+t}]\dd{t}.
+\]
+Abusing notations a bit, we may write
+\[
+\Vx[s]{}[]=\Vx[0]{}[]
++\int_{0}^{s}\blc{\Vx[t]{}[]\delta_t\dd{t}}+(\gc{G_t}-\rc{e_t})\dd{t}
+-\vc{(S_t+E_t-\Vx[t]{}[])\mu_{x+t}\dd{t}}.
+\]
+We can then gain some intuition out of it:
+\begin{enumerate}[label={(\arabic*)}]
+\item Starting (time \(0\)) reserve: \(\Vx[0]{}[]\).
+\item In every ``infinitesimal'' time interval \([t,t+\dd{t}]\) between time
+\(0\) and \(s\):
+\begin{itemize}
+\item \faIcon{plus-circle} \emph{(interest)} \(\blc{\Vx[t]{}[]\delta_t\dd{t}}\)
+is earned and added to the reserve.
+\item \faIcon{plus-circle} \emph{(premium less expense)}
+\((\gc{G_t}-\rc{e_t})\dd{t}\) is received and added to the reserve.
+\item \faIcon{minus-circle} \emph{(\(\text{NAAR}\times \text{death prob.}\))}
+\(\vc{\underbrace{(S_t+E_t-\Vx[t]{}[])}_{\text{NAAR}}\underbrace{\mu_{x+t}\dd{t}}_{\text{death
+prob.}}}\) is subtracted from the reserve.
+\end{itemize}
+\item ``Summing'' up all these ``infinitesimal'' changes and adding it to the
+starting reserve (\(\Vx[0]{}[]\)) gives the ending (time \(s\)) reserve:
+\(\Vx[s]{}[]\).
+\end{enumerate}
+\begin{note}
+\emph{(If you are interested)} See \textcite{dickson2019actuarial} for the
+mathematical derivation of Thiele's differential equation.
+\end{note}
+
+\item While Thiele's differential equation is certainly of theoretical
+interest, it is difficult to be directly used in practice, due to the high
+difficulty of solving this differential equation. In view of this, often
+\emph{numerical} methods for solving differential equation are utilized to
+allow practical usages of Thiele's differential equation. One notable numerical
+method is \defn{Euler's method}.
+
+\emph{Key Formulas:} (\(h\): \defn{step size})
+\begin{itemize}
+\item \emph{\defn{Forward approximation}:} Change
+\(\displaystyle \dv{}{t}\Vx[t]{}[]\to\frac{\Vx[t+h]{}[]-\Vx[t]{}[]}{h}\). This gives
+\[
+\frac{\Vx[t+h]{}[]-\Vx[t]{}[]}{h}
+\approx \Vx[t]{}[]\delta_t+(G_t-e_t)
+-(S_t+E_t-\Vx[t]{}[])\mu_{x+t}.
+\]
+\item \emph{\defn{Backward approximation}:} Change \(\displaystyle
+\dv{}{t}\Vx[t]{}[]\to\frac{\Vx[t+h]{}[]-\Vx[t]{}[]}{h}\), \underline{and change \(t\to
+t+h\) on the RHS}. This gives
+\[
+\frac{\Vx[t+h]{}[]-\Vx[t]{}[]}{h}
+\approx \Vx[t+h]{}[]\delta_{t+h}+(G_{t+h}-e_{t+h})
+-(S_{t+h}+E_{t+h}-\Vx[t+h]{}[])\mu_{x+t+h}.
+\]
+\end{itemize}
+These formulas allow us to perform recursions in a similar way as the
+\(1/m\)thly case, but via the Thiele's differential equation.
+\end{enumerate}
+\subsection{Asset Shares}
+\begin{enumerate}
+\item \emph{Definition:} The time-\(t\) \defn{asset share} is the share
+\faIcon{pizza-slice} available in the ``\underline{actual} pool of money
+\faIcon{coins}'' (accumulated from the \underline{actual} net cash flows
+received before time \(t\)) per \underline{actual} survivor (or per policy in
+force\footnote{As we shall see in \Cref{subsect:practical-issues}, sometimes it
+is possible for a surviving policyholder to withdraw from his policy
+voluntarily, making his policy not in force (but he is still a ``survivor'').
+But to avoid unnecessary complications here, we will just use the term
+``survivor'', with the understanding that it means more generally ``surviving
+policy'', or policy in force.}) \faIcon{at} time \(t\):
+
+\begin{align*}
+\as_{t}&=\frac{\pvt{0}{\lx{x}\times \text{\underline{actual} NCFs received before time \(t\)}}\times (1+i^{\mathrm{actual}})^{t}}
+{\underbrace{\lx{x+t}^{\mathrm{actual}}}_{\text{\underline{actual} number of survivors \faIcon{at} time \(t\)}}}\\
+&=\frac{\lx{x}\times \pvt{0}{\text{\underline{actual} NCFs received}}\times (1+i^{\mathrm{actual}})^{t}}{\lx{x+t}^{\mathrm{actual}}} \\
+&=\frac{\pvt{0}{\text{\underline{actual} NCFs received}}}{(v^{\mathrm{actual}})^{t}\px[t]{x}^{\mathrm{actual}}}
+\end{align*}
+where:
+\begin{itemize}
+\item \(\px[t]{x}^{\mathrm{actual}}=\lx{x+t}^{\mathrm{actual}}/\lx{x}\) is the
+``actual survival probability'', i.e., the \underline{actual} fraction of
+survivors \faIcon{at} time \(t\), among the people initially aged \(x\). \begin{note}
+Similar meanings apply for ``\(\qx[t]{x}^{\mathrm{actual}}\)''.
+\end{note}
+\item \(i^{\mathrm{actual}}\) is the \underline{actual} effective interest rate
+per annum. When the actual annual interest rates are different for different
+years, we can modify the accumulation factor \((1+i^{\mathrm{actual}})^{t}\)
+accordingly.
+\end{itemize}
+
+\begin{remark}
+\item We have the following convention about whether a cash flow precisely
+\faIcon{at} time \(t\) should be included as cash flow ``before'' time \(t\):
+\begin{itemize}
+\item \underline{Benefits} and \underline{benefit}-related expenses (i.e.,
+settlement expenses) \faIcon{at} time \(t\): included.
+\item \underline{Premiums} and \underline{premium}-related expenses (i.e.,
+initial and renewal expenses) \faIcon{at} time \(t\): NOT included.
+\end{itemize}
+\item Since actual quantities are to be used, the earliest time at which we can
+\emph{possibly} compute time-\(t\) asset share is time \(t\).
+\end{remark}
+
+\item \emph{Key formulas:}
+\begin{enumerate}
+\item \emph{(zero initial asset share)} We always have \(\as_{0}=0\), whenever
+there is no benefit at time \(0\) (always the case virtually).
+
+\item \label{it:asset-share-recurs} \emph{(recursive formula)} When \(t\) is an
+integer time,
+\[
+(\as_{t}+G_t-e_t^{\mathrm{actual}})(1+i^{\mathrm{actual}}_t)
+=\qx{x+t}^{\mathrm{actual}}(S_{t+1}+E_{t+1}^{\mathrm{actual}})
++\px{x+t}^{\mathrm{actual}}\as_{t+1}
+\]
+where the quantities with ``\(\mathrm{actual}\)'' superscript are the actual
+ones (e.g., \(i_t^{\mathrm{actual}}\) refers to the actual time-\(t\) annual
+interest rate). It takes a very similar form as the usual policy value
+recursion.
+\end{enumerate}
+\end{enumerate}
+\subsection{Practical Issues}
+\label{subsect:practical-issues}
+\begin{enumerate}
+\item \textbf{Policy alteration.} Some terminologies:
+\begin{itemize}
+\item A policy is \defn{surrendered} when some of the policy value is paid to
+the withdrawing policyholder, and is \defn{lapsed} if no payment is made.
+\item The amount paid upon policy surrender is called the \defn{surrender value}.
+\item A \defn{paid-up policy} is a policy where premium payments stop early
+(they are \underline{paid up}) but remains in force. Because of this, the
+benefit is usually reduced, and the reduced value is called the \defn{paid-up
+sum insured}.
+\end{itemize}
+\item \label{it:value-policy-alt} \emph{Basic principle for valuation upon
+policy alteration:}
+\[
+\text{EPV of \emph{original} future loss at alteration time}
+=\text{EPV of \emph{revised} future loss at alteration time},
+\]
+or
+\[
+\boxed{\text{Policy value of \emph{original} policy at alteration time}
+=\text{Policy value of \emph{revised} policy at alteration time}}.
+\]
+For example, if a policyholder requests to alter his term life insurance of
+\num{1000000} to a whole life insurance, when he is aged 65 and the term life
+insurance has 10 years policy term remaining, then the benefit amount \(W\) for
+the whole life insurance would be given by
+\[
+\num{1000000}\Ax{\itop{65}:\angl{10}}=W\Ax{65}
+\]
+according to the basic principle.
+
+\item In practice, there may be various costs and charges upon policy
+alteration. Such costs and charges may be regarded as a loss incurred for the
+revised policy, at the policy alteration time. In this example, if there is a
+cost of 5\% of the original policy value incurred for policy alteration, then
+the equation would become
+\[
+\num{1000000}\Ax{\itop{65}:\angl{10}}=W\Ax{65}+\underbrace{0.05\times
+\qty(\num{1000000}\Ax{\itop{65}:\angl{10}})}_{\mathclap{\text{EPV of extra loss for revised policy}}},
+\]
+which results in a smaller benefit \(W\).
+
+\item \textbf{Negative policy value.} Negative policy value often arises in
+early time period, which is typically caused by a relatively large initial
+expense. To illustrate this, suppose the conditions for the equality of
+retrospective and usual policy values are satisfied. Then, consider
+\(\Vx[t]{}[]\) for some very small \(t\), say \(t=0.0001\). By the
+retrospective approach,
+\begin{align*}
+\Vx[t]{}[]&=\frac{\epvt{0}{\text{past gross
+premiums}}-\overbrace{\epvt{0}{\text{past benefits and
+expenses}}}^{\text{involving initial expense}}}{\Ex[t]{x}} \\
+&\approx -\text{initial expense}<0\qquad\text{(very small \(t\), very large initial expense)}.
+\end{align*}
+It is not prudent to assign positive value to a policy having negative policy
+value, despite the apparent expected future gain, because the policyholder can
+\textbf{lapse} the policy before such gain is captured! Hence, prudent
+actuaries would suggest to just assign a \emph{zero} value to such policy.
+\end{enumerate}
