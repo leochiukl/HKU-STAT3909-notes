@@ -6,7 +6,7 @@ section titled ``Policy Values I'' in the
 \href{https://leochiukl.github.io/files/stat3901-study-notes.pdf}{STAT3901
 study notes}), here we will explore some further topics:
 \begin{itemize}
-\item \emph{Continuous policy value recursions:} For each of life insurance and
+\item \emph{Continuous policy value recursion:} For each of life insurance and
 life annuity, we have explored the \emph{annual}, \emph{\(1/m\)thly}, and
 \emph{continuous} cases in STAT3901. But for policy value recursions, we have
 only discussed the \emph{annual} and \emph{\(1/m\)thly} cases. The continuous
@@ -35,7 +35,8 @@ the case and some pitfalls of having negative policy value.
 \end{itemize}
 \end{itemize}
 \end{enumerate}
-\subsection{Continuous Policy Value Recursions: Thiele's Differential Equation}
+\subsection{Continuous Policy Value Recursion: Thiele's Differential Equation}
+\label{subsect:policy-val-cts-recurs}
 \begin{enumerate}
 \item Recall the \(1/m\)thly version of policy value recursion in the net
 amount at risk (NAAR) form:
@@ -69,7 +70,7 @@ amount at risk (NAAR) form:
 \end{tikzpicture}
 \end{center}
 We can then observe that changes in policy values are influenced by multiple
-factors: (i) \blc{interest}, (ii) \gc{premiums} \& \rc{expenses}, and (iii)
+factors: (i) \blc{interest}, (ii) \gc{premiums} \& \rc{renewal expenses}, and (iii)
 \vc{\(\text{NAAR}\times \text{death prob.}\)} (it reduces the amount in ``what
 we have'' that can be ``sent'' to the policy value \(\Vx[t+\frac{1}{m}]{}[]\)).
 
@@ -114,7 +115,7 @@ We can then gain some intuition out of it:
 \begin{enumerate}[label={(\arabic*)}]
 \item Starting (time \(0\)) reserve: \(\Vx[0]{}[]\).
 \item In every ``infinitesimal'' time interval \([t,t+\dd{t}]\) between time
-\(0\) and \(s\):
+\(0\) and time \(s\):
 \begin{itemize}
 \item \faIcon{plus-circle} \emph{(interest)} \(\blc{\Vx[t]{}[]\delta_t\dd{t}}\)
 is earned and added to the reserve.
@@ -133,7 +134,7 @@ starting reserve (\(\Vx[0]{}[]\)) gives the ending (time \(s\)) reserve:
 mathematical derivation of Thiele's differential equation.
 \end{note}
 
-\item While Thiele's differential equation is certainly of theoretical
+\item \label{it:euler-method} While Thiele's differential equation is certainly of theoretical
 interest, it is difficult to be directly used in practice, due to the high
 difficulty of solving this differential equation. In view of this, often
 \emph{numerical} methods for solving differential equation are utilized to
@@ -162,6 +163,7 @@ These formulas allow us to perform recursions in a similar way as the
 \(1/m\)thly case, but via the Thiele's differential equation.
 \end{enumerate}
 \subsection{Asset Shares}
+\label{subsect:asset-shares}
 \begin{enumerate}
 \item \emph{Definition:} The time-\(t\) \defn{asset share} is the share
 \faIcon{pizza-slice} available in the ``\underline{actual} pool of money
@@ -237,6 +239,11 @@ the withdrawing policyholder, and is \defn{lapsed} if no payment is made.
 benefit is usually reduced, and the reduced value is called the \defn{paid-up
 sum insured}.
 \end{itemize}
+\begin{note}
+Unless otherwise specified, we shall assume that there are no policy
+lapses/surrenders.
+\end{note}
+
 \item \label{it:value-policy-alt} \emph{Basic principle for valuation upon
 policy alteration:}
 \[

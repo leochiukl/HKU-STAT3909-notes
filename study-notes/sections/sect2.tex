@@ -1,5 +1,1206 @@
 \section{Multiple State Models}
 \label{sect:mult-state-models}
 \begin{enumerate}
-\item 
+\item If \Cref{sect:policy-values} is described as the ``appetizer'', then what
+we are going to cover in
+\Cref{sect:mult-state-models,sect:mult-decr-models,sect:mult-life-models} would
+be the ``main course'', with \Cref{sect:profit-analysis} being the ``dessert''.
+\Cref{sect:mult-state-models,sect:mult-decr-models,sect:mult-life-models}
+is essentially about \emph{generalizing} what we learnt in STAT3901 in several
+ways:
+\begin{itemize}
+\item \emph{\Cref{sect:mult-state-models} (multiple state models):}
+Generalization by classifying people into \underline{multiple states}.
+\item \emph{\Cref{sect:mult-decr-models} (multiple decrement models):}
+Generalization by classifying people \emph{dead} into \underline{multiple} ways
+of death (or more properly, \underline{decrement}\footnote{Analogous to the
+remark for asset share in \Cref{subsect:asset-shares}, it is possible for a
+policyholder to exit from the policy without actually dying, e.g., through
+lapsing the policy. So the term ``decrement'' (which refers generally to any
+kind of ``quitting the policy'') is used instead of ``death'' here.}).
+\item \emph{\Cref{sect:mult-life-models} (multiple life models):}
+Generalization by incorporating \underline{multiple lives} in a single policy.
+\end{itemize}
+So, in some sense, we are repeating the STAT3901 course for \emph{three times},
+one for each kind of the models here!\footnote{Perhaps this is a bit
+exaggerated, as we will only repeat part of (but still quite a lot of!) the
+topics covered in STAT3901 for each type of the models here.} While we have
+spent \emph{one whole semester} for going through the STAT3901 course, we will
+only spend \emph{less than one} semester for going through these three sections
+(``\(3\times \text{STAT3901 course}\)'') \faIcon[regular]{grin-beam-sweat}.
+Thus, as you can expect, the pace in STAT3909 will be \emph{much quicker}
+\faIcon{angle-double-right} than the one in STAT3901, which should be
+manageable \emph{if} you are familiar with the STAT3901 content. (Hopefully this
+is the case...  \faIcon[regular]{grin-beam-sweat}; \warn{} If not, it is better
+for you to take a moment and review \faIcon{book-reader} what you have learnt
+in STAT3901 first, before proceeding further.)
+
+\Cref{sect:profit-analysis} is about a more practically useful topic, namely
+analyzing \emph{profits}. The ultimate goal of selling insurance products is to
+make profits (right?), so certainly this is a topic deserving attention. We put
+it at the last as we are going to apply some concepts learnt in the prior
+sections to the profit analysis. This section is perhaps (?) the easiest part
+in STAT3909 and can be your ``grade saver'' \faIcon{cross}.\footnote{Note
+however that \(\text{``easiest''}\ne\text{``easy''}\). Certainly you still need
+to pay (substantial) effort on studying this section in order for it to
+``save your grade'' (hopefully).}
+
+\item To guide our discussions about the generalizations in
+\Cref{sect:mult-state-models,sect:mult-decr-models,sect:mult-life-models}, we
+will organize the contents covered in each of
+\Cref{sect:mult-state-models,sect:mult-decr-models,sect:mult-life-models} in
+the following three aspects:
+\begin{enumerate}[label={(\arabic*)}]
+\item \emph{Probabilistic calculations:} We will discuss formulas of various
+probabilistic quantities for the new models.
+
+\item \emph{Insurance and annuity EPV calculations:} Armed with the formulas
+for computing probabilistic quantities, we will introduce EPV calculation
+formulas for different types of \emph{state-contingent} (more general than
+``life contingent''!) insurances and annuities. As you will see, the general
+EPV calculation formula introduced in STAT3901 is still very useful
+\faIcon[regular]{thumbs-up} here!
+
+\item \emph{Premium and policy value calculations:} With the knowledge about
+insurance and annuity EPVs, we will explore premium and policy value
+calculations under these new models, and also calculations of some
+probabilistic quantities about the loss random variables underlying the
+premiums and policy values.
+\end{enumerate}
+\end{enumerate}
+\subsection{Probabilistic Calculations}
+\begin{enumerate}
+\item \textbf{Motivation.} In STAT3901, we have exclusively distinguished lives
+according to their survival status: A life is either \emph{alive} or
+\emph{dead}. However, real life is not that binary. For instance, a life can be
+healthy \faIcon{child}, sick \faIcon{head-side-mask}, disabled
+\faIcon{wheelchair}, retired, etc. Intuitively, these kinds of lives can have
+rather different ``characteristics'', so it makes sense to model differently
+for lives in different \emph{states}.  Mathematically, we are going to use a
+\emph{multiple state model} to do this.
+
+\item The simplest multiple state model is the one we have always been studying
+in STAT3901, which is called the \defn{alive-dead model}. It can be graphically
+represented as follows.
+\begin{center}
+\begin{tikzpicture}
+\node[draw, minimum width=3cm, minimum height=1cm] () at (1.5,0.5) {Alive (0)};
+\node[draw, minimum width=3cm, minimum height=1cm] () at (6.5,0.5) {Dead (1)};
+\draw[-Latex] (3,0.5) -- (5,0.5)
+node[midway, above]{die};
+\end{tikzpicture}
+\end{center}
+The model has two \emph{states}: alive (labelled as ``state 0'') and dead
+(labelled as ``state 1''). The rightward arrow suggests the possible direction
+of transitions in states: Certainly it is only possible to go/transit from
+state 0 to 1, but not the reverse!
+
+\item \textbf{Terminologies.} A multiple state model is:
+\begin{itemize}
+\item \defn{discrete-time} if transition can only take place at the end of
+periods (often years).
+\item \defn{continuous-time} if transition can take place at any time.
+\end{itemize}
+
+\item \textbf{Notations.} We need some new probability notations for multiple
+state model.
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Notation&Probability that \((x)\) ... \\
+\midrule
+\(\px[\vc{t}]{x}[\blc{i}\mgc{j}]\)&\((x)\) is \underline{currently in state
+\blc{\(i\)}} and \underline{will be in state \mgc{\(j\)} at time \vc{\(t\)}}. \\
+\midrule
+\(\px[\vc{t}]{x}[\overline{\blc{ii}}]\)&
+\makecell[l]{
+\((x)\) is \underline{currently in state \blc{\(i\)}} and will \underline{stay
+in state \blc{\(i\)} for \(\vc{t}\) years}\\ (i.e.,
+without leaving state \blc{\(i\)} in between).} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{remark}
+\item The notations here are not standard actuarial notations.
+\item \(\px[t]{x}[ij]\) and \(\px[t]{x}[\overline{ii}]\) are called
+\defn{transition probability} and \defn{occupancy probability} respectively.
+\end{remark}
+
+Examples: In the alive-dead model,
+\begin{itemize}
+\item \(\px[10]{30}[01]\) is the probability that a life aged 30 will be dead
+at time \(10\). Using the notations in STAT3901, it is ``\(\qx[10]{30}\)''.
+\item \(\px[10]{30}[00]=\px[10]{30}[\overline{00}]\) is the probability that a
+life aged 30 will be alive at time \(10\) (equivalently, be always alive for 10
+years). Using the notations in STAT3901, it is ``\(\px[10]{30}\)''.
+
+\begin{note}
+Here the occupancy probability may not appear to be useful, as we are working
+in a multiple state model where it is not possible to go back from state \(1\)
+to state \(0\), so \(\px[t]{x}[00]=\px[t]{x}[\overline{00}]\) always. But as we
+will see, in some more advanced multiple state models, the occupancy
+probability \(\px[t]{x}[\overline{ii}]\) can be \emph{different} from
+\(\px[t]{x}[ii]\).
+\end{note}
+\end{itemize}
+\item \label{it:gen-prob-fmla} \textbf{General probability calculation
+formula.} Like the general EPV calculation formula we learn in STAT3901, there
+is a general \emph{probability} calculation formula available, which is helpful
+for dealing with probability calculations for multiple state model in general.
+\[
+\boxed{\text{Desired probability}=\underset{\text{all desired transition paths}}{\sum\text{ or }\int}
+\text{probability of going through the path}}.
+\footnote{\emph{(If you are interested)} The justification of this formula is
+related to the mathematical formulation of multiple state model as a
+\emph{Markov chain} (STAT3903). For more details about the mathematical
+formulation, see \textcite{dickson2019actuarial}.}
+\]
+
+\subsubsection*{Discrete-Time Multiple State Models}
+\item \label{it:chapman-kolmogorov} To illustrate the general probability calculation formula, we consider a
+special case that is helpful for probability computations in discrete-time
+multiple state models. It is known as the \defn{Chapman-Kolmogorov equation}:
+For any states \blc{\(i\)} and \mgc{\(j\)},
+\[
+\px[t+s]{x}[\blc{i}\mgc{j}]=\sum_{\text{all states \(k\)}}^{}\px[t]{x}[\blc{i}k]\times \px[s]{x+t}[k\mgc{j}],
+\]
+where \(t\) and \(s\) are any nonnegative integers.
+\begin{center}
+\begin{tikzpicture}
+\node[] () at (0,5) {Time \(0\)};
+\node[] () at (3,5) {Time \(t\)};
+\node[] () at (6,5) {Time \(t+s\)};
+\node[draw] (start) at (0,2) {State \blc{\(2\)}};
+\node[draw] (end) at (6,3) {State \mgc{\(3\)}};
+\foreach \x in {0,...,4} {
+\node[draw] () at (3,\x) {State \(\x\)};
+\draw[-Latex] (start) -- node[midway]{\(\px[t]{x}[\blc{2}\x]\)} (2.3,\x);
+\draw[-Latex] (3.7,\x) -- node[midway]{\(\px[s]{x+t}[\x\mgc{3}]\)} (end);
+}
+\end{tikzpicture}
+\end{center}
+From this picture, we can see that summing all the states \(k\) would involve
+all the paths desired. Each term \(\px[t]{x}[\blc{i}k]\times
+\px[s]{x+t}[k\mgc{j}]\) in the sum corresponds to the probability of going
+through a path.
+
+\item If you still recall the linear algebra knowledge from MATH1821/MATH2822
+(perhaps not), you may recognize that the sum is somewhat similar to a matrix
+multiplication. In fact, we can indeed express the Chapman-Kolmogorov equation
+in a matrix form.
+
+
+First we define the \defn{\(k\)-step transition matrix} (\(k\) is a positive
+integer) for a multiple state model with \(n+1\) states \(0,1,\dotsc,n\) as the
+following \((n+1)\times (n+1)\) matrix:
+\[
+P^{(k)}=\mqty[
+\px[k]{x}[00]&\px[k]{x}[01]&\cdots&\px[k]{x}[0n] \\
+\px[k]{x}[10]&\px[k]{x}[11]&\cdots&\px[k]{x}[1n] \\
+\vdots&\vdots&\ddots&\vdots \\
+\px[k]{x}[n0]&\px[k]{x}[n1]&\cdots&\px[k]{x}[nn]
+]
+\]
+\begin{note}
+Usually we just call a \(1\)-step transition matrix simply as \defn{transition
+matrix} and denote it by \(P\).
+\end{note}
+Then, we can express the Chapman-Kolmogorov equation in the following matrix
+form:
+\[
+P^{(t+s)}=P^{(t)}P^{(s)}.
+\]
+where \(P^{(t)}P^{(s)}\) denotes the matrix product of \(P^{(t)}\) and
+\(P^{(s)}\). Particularly, it implies that the \(k\)-step transition matrix is
+indeed the \(k\)th power of the (\(1\)-step) transition matrix:
+\(P^{(k)}=P^k\).
+
+\item \label{it:first-step-analysis} \textbf{First step analysis.} Apart from
+the Chapman-Kolmogorov equation, another useful tool for calculating
+probabilistic quantities in discrete-time multiple state models is the so-called
+\emph{first-step analysis}. Essentially it is an application of the conditional
+variant of law of total probability/expectation:
+\begin{itemize}
+\item \emph{(probability)}
+\[
+\boxed{p_{ij}\triangleq\prob{\text{ever visit state \(j\)}|\text{start in state \(i\)}}
+=\sum_{\text{all states \(k\)}}^{}\prob{\text{\gc{first step} \(i\to k\)}}\times p_{kj}}.
+\]
+\item \emph{(expectation)}
+\begin{align*}
+\boxed{e_{ij}}&\triangleq\expv{\text{time spent in state \(j\)}|\text{start in state \(i\)}} \\
+&=\boxed{\sum_{\text{all states \(k\)}}^{}\prob{\text{\gc{first step} \(i\to k\)}}
+\qty(e_{kj}+\delta_{ij})}
+\end{align*}
+where \(\delta_{ij}\) equals \(1\) if \(i=j\), and \(0\) otherwise.
+\begin{note}
+\(\delta_{ij}\) is included to count also the first period spent in state
+\(i\), in case when \(i=j\). Note that \(e_{kj}\) in the expression is
+measuring the mean time spent in state \(j\) \emph{after} the first period,
+when the life is in state \(k\) at the start of the second period (time \(1\)).
+\end{note}
+\end{itemize}
+Here \(\prob{\text{\gc{first step} \(i\to k\)}}\) refers to the transition
+probability \(\px[]{x}[ik]\).
+
+The probability formula is actually an instance of the general
+probability calculation formula in \labelcref{it:gen-prob-fmla} again.
+\begin{center}
+\begin{tikzpicture}
+\node[] () at (0,5) {Time \(0\)};
+\node[] () at (3,5) {Time \(1\)};
+\node[draw] (start) at (0,2) {State \blc{\(2\)}};
+\node[draw, circle] (end) at (11,3) {Ever visit state \mgc{\(3\)}};
+\foreach \x in {0,...,4} {
+\node[draw] () at (3,\x) {State \(\x\)};
+\draw[-Latex] (start) -- node[midway]{\(\px{x}[\blc{2}\x]\)} (2.3,\x);
+\draw[-Latex] (3.7,\x) -- node[midway]{\(p_{\x\mgc{3}}\)} (end);
+}
+\end{tikzpicture}
+\end{center}
+For the expectation formula, it can be understood via a similar intuition:
+\begin{center}
+\begin{tikzpicture}
+\node[] () at (0,5) {Time \(0\)};
+\node[] () at (3,5) {Time \(1\)};
+\node[draw] (start) at (0,2) {State \blc{\(2\)}};
+\foreach \x in {0,...,4} {
+\node[draw] () at (3,\x) {State \(\x\)};
+\draw[-Latex] (start) -- node[midway]{\(\px{x}[\blc{2}\x]\)} (2.3,\x);
+\draw[-Latex, magenta] (3.7,\x) -- node[midway, above, black]{\(e_{\x\mgc{2}}\)} (11,\x);
+}
+\draw[-Latex, magenta] (start) --node[midway, below, text=black, text opacity=1, fill=yellow, fill opacity=0.2]{\(\delta_{\blc{2}\mgc{2}}=1\)} (2.3,2);
+\end{tikzpicture}
+\end{center}
+\subsubsection*{Continuous-Time Multiple State Models}
+\item \textbf{Force of transition.} The concept of \emph{force of transition}
+is exclusive to \emph{continuous-time} multiple state models. As one may
+expect, it has a certain similarity to the \emph{force of mortality} learnt in
+STAT3901.
+
+Recall from STAT3901 that the force of mortality \(\mu_{x}\) is given by
+\[
+\mu_{x}=\frac{\displaystyle -\dv{}{x}\px[x]{0}}{\px[x]{0}}
+=\lim_{h\to 0^{+}}\frac{1}{\px[x]{0}}\frac{\px[x]{0}-\px[x+h]{0}}{h}
+=\lim_{h\to 0^{+}}\frac{1-\px[h]{x}}{h}
+=\lim_{h\to 0^{+}}\frac{\qx[h]{x}}{h}
+\overset{\text{(alive-dead model)}}{=}
+\lim_{h\to 0^{+}}\frac{\px[h]{x}[01]}{h}.
+\]
+
+This leads us to define the \defn{force transition} from state \(i\) to state
+\(j\ne i\), for a life aged \(x\), by:
+\[
+\mu_{x}^{ij}=\lim_{h\to 0^{+}}\frac{\px[h]{x}[ij]}{h}.
+\]
+Here, like the force of mortality, we can interpret \(\mu_{x}^{ij}\times \Delta
+x\) as the approximated probability for \((x)\) to transit from state \(i\) to
+state \(j\ne i\) in \(\Delta x\) years, when \(\Delta x\) is small.
+Symbolically, we can write \(\px[\Delta x]{x}[ij]\approx \mu_{x}^{ij}\times
+\Delta x\) when \(\Delta x\) is small.
+
+\item \label{it:occup-fmla} \textbf{Occupancy probability formula.} In
+discrete-time multiple state model, we only have ``nice'' formulas for
+transition probability, but not occupancy probability. It turns out that in
+\emph{continuous-time} multiple state model, there is a ``nice'' formula
+available for occupancy probability, in terms of forces of transition:
+\[
+\boxed{\px[t]{x}[\overline{ii}]=\exp\qty(-\int_{0}^{t}\sum_{j\rc{\ne i}}^{}\mu_{x+s}^{ij}\dd{s})}.
+\]
+\begin{remark}
+\item This formula is not obtained based on the general probability formula in
+\labelcref{it:gen-prob-fmla}, so it deserves some more attention.
+\item Intuitively, \(\sum_{j\rc{\ne i}}^{}\mu_{x+s}^{ij}\) sums up all the
+forces ``driving'' the life to leave state \(i\). The larger the sum, the
+smaller the occupancy probability \(\px[t]{x}[\overline{ii}]\).
+\item \emph{(If you are interested)} The derivation of the occupancy
+probability formula involves some regularity assumptions on continuous-time
+multiple state model, which are omitted (and implicitly imposed) here. For the
+purpose of STAT3909, it is more important to know when and how to apply the
+formulas, and their proofs are not required. Nonetheless, in case you are still
+interested in the omitted assumptions and the derivations, see
+\textcite{dickson2019actuarial}.
+\end{remark}
+
+The occupancy probability formula can be seen as a generalization to the
+following \(\mu_{x+t}\to \px[t]{x}\) formula from STAT3901:
+\[
+\px[t]{x}=\exp\qty(-\int_{0}^{t}\mu_{x+s}\dd{s}).
+\]
+Actually, this is a special case of the occupancy probability formula here
+since we can write
+\[
+\px[t]{x}[\overline{00}]=\exp\qty(-\int_{0}^{t}\mu_{x+s}^{01}\dd{s})
+\]
+using the alive-dead model notations.
+\item \label{it:kolmogorov-fwd-eq}
+\textbf{Kolmogorov\footnote{\href{https://en.wikipedia.org/wiki/Andrey_Kolmogorov}{The
+same Kolmogorov} as the one in Chapman-Kolmogorov equation!} forward equation.}
+Like \emph{Thiele's differential equation} in
+\Cref{subsect:policy-val-cts-recurs}, \emph{Kolmogorov forward equation} is
+also a differential equation, but it is about \emph{transition probabilities}.
+Nonetheless, it admits a similar form of intuitive interpretation as Thiele's
+differential equation.
+
+First we state the \defn{Kolmogorov forward equation}:
+\[
+\boxed{\dv{}{t}\px[t]{x}[ij]=\sum_{\text{state }k\ne j}^{}\qty(\px[t]{x}[ik]\mu_{x+t}^{kj}-\px[t]{x}[ij]\mu_{x+t}^{jk})}
+\]
+for any states \(i\) and \(j\).\footnote{\emph{(If you are interested)} To
+learn more about the derivation of Kolmogorov forward equation, see
+\textcite{dickson2019actuarial}.}
+
+Again, to understand it more intuitively, we integrate both sides from \(0\) to
+a positive value \(s\):
+\[
+\px[s]{x}[ij]-\px[0]{x}[ij]=
+\int_{0}^{s}\sum_{\text{state }k\ne j}^{}\qty(\px[t]{x}[ik]\mu_{x+t}^{kj}-\px[t]{x}[ij]\mu_{x+t}^{jk})\dd{t}.
+\]
+After some rearrangements and slight abuse of notations, we get
+\[
+\px[s]{x}[ij]=\underbrace{\px[0]{x}[ij]}_{\delta_{ij}}+
+\int_{0}^{s}\gc{\sum_{k\ne j}^{}\px[t]{x}[ik]\mu_{x+t}^{kj}\dd{t}}
+-\rc{\sum_{k\ne j}^{}\px[t]{x}[ij]\mu_{x+t}^{jk}\dd{t}}.
+\]
+From here we can see that there are two \emph{opposing} ``forces''
+\faIcon{compress-alt} active between time \(0\) and \(s\) that influence the
+chance for the life to be in state \(j\) after \(s\) years. More specifically,
+we can interpret it as follows:
+\begin{enumerate}[label={(\arabic*)}]
+\item ``Starting'' probability: \(\px[0]{x}[ij]\), which serves as a baseline
+on which changes are continuously made to finally result in the \(s\)-year
+transition probability \(\px[s]{x}[ij]\).
+
+The probability is \(1\) if \(i=j\) and \(0\) otherwise. Intuitively, this
+means that if the life \emph{starts} at state \(j\), then there is a somewhat
+large ``bonus'' on the chance for the life to be in state \(j\) after \(s\)
+years (the ``starting line'' is at \(1\)).
+
+\item In every ``infinitesimal'' time interval \([t,t+\dd{t}]\) between time
+\(0\) and time \(s\):
+\begin{itemize}
+\item \faIcon{plus-circle} \gc{\emph{(incoming probability)}} \(\sum_{k\ne j}^{}
+\underbrace{\px[t]{x}[ik]}_{\text{\(i\to k\) after \(t\) years}}\times 
+\underbrace{\mu_{x+t}^{kj}\dd{t}}_{\text{\gc{enter} state \(j\) in \([t,t+\dd{t}]\)}}\)
+\item \faIcon{minus-circle} \rc{\emph{(outgoing probability)}}
+\(\sum_{k\ne j}^{}
+\underbrace{\px[t]{x}[ij]}_{\text{\(i\to j\) after \(t\) years}}\times 
+\underbrace{\mu_{x+t}^{jk}\dd{t}}_{\text{\rc{leave} state \(j\) \([t,t+\dd{t}]\)}}\)
+\end{itemize}
+In short, the \gc{incoming probability} (\rc{outgoing probability}) sums up the
+probabilities corresponding to all possible paths for \gc{entering}
+(\rc{leaving}) state \(j\) in the time interval \([t,t+\dd{t}]\), and we are
+\underline{adding} \gc{incoming probability} and \underline{subtracting}
+\rc{outgoing probability}. Note that \defn{entering state} \(j\) means
+transiting to state \(j\) from a \emph{different} state.
+\item ``Summing'' up all these ``infinitesimal'' contributions to the value
+\(\px[0]{x}[ij]\), we get the ``ending'' (final) probability:
+\(\px[s]{x}[ij]\).
+\end{enumerate}
+\item \label{it:gen-tran-prob-fmla} \textbf{General transition probability
+formula.} Lastly, let us consider a general transition probability formula in
+continuous-time multiple state model, which is based on the general probability
+calculation formula in \labelcref{it:gen-prob-fmla}: For any states \(i\) and
+\(j\),
+\[
+\px[t]{x}[ij]=\int_{0}^{t}\qty(\sum_{k\ne j}^{}\px[s]{x}[ik]\mu_{x+s}^{kj})
+\underbrace{\px[t-s]{x+s}[\overline{jj}]}_{\mathclap{\text{don't miss \warn{}}}}\dd{s}.
+\footnote{
+\emph{(If you are interested)} This formula is indeed obtained by solving the
+Kolmogorov forward equation and applying the occupancy probability formula.
+Solving the Kolmogorov forward equation is manageable (but not too simple
+still) since it can be rewritten in the form
+\[
+\dv{}{t}\vc{\px[t]{x}[ij]}+\qty(\sum_{k\ne j}^{}\mu_{x+t}^{jk})\vc{\px[t]{x}[ij]}
+=\sum_{k\ne j}^{}\px[t]{x}[ik]\mu_{x+t}^{kj},\]
+which is a first order linear ordinary differential equation (ODE) (learnt in
+MATH1821). Probably you already forget what this means and how to solve this
+kind of ODE, but it turns out that this form of ODE can be solved using the
+method of ``integration factor''. (Frankly speaking, I have to look this up
+also... \faIcon[regular]{grin-beam-sweat})
+}
+\]
+This seemingly complicated formula is indeed an instance of the general
+probability calculation formula.
+
+To see this, we first abuse notations a bit and write
+\[
+\px[t]{x}[ij]=\int_{0}^{t}\qty(\sum_{k\ne j}^{}\px[s]{x}[ik]\mu_{x+s}^{kj}\dd{s})\px[t-s]{x+s}[\overline{jj}].
+\]
+Then, for every time point \(s\) between time \(0\) and time \(t\),
+\begin{itemize}
+\item  \(\sum_{k\ne j}^{} \underbrace{\px[s]{x}[ik]}_{\text{\(i\to k\) after
+\(s\) years}}\times \underbrace{\mu_{x+s}^{kj}\dd{s}}_{\text{\gc{enter} state
+\(j\) in \([s,t+\dd{s}]\)}}\)
+is the probability
+for \gc{entering} state \(j\) in the time interval \([s,s+\dd{s}]\) (the
+``incoming probability'' in the intuitive interpretation of Kolmogorov forward
+equation).
+\item \(\px[t-s]{x+s}[\overline{jj}]\) is the probability for the life to
+\emph{stay} in the state \(j\) for the remaining \(t-s\) years (i.e., until
+time \(t\)).
+\end{itemize}
+Hence, \(\qty(\sum_{k\ne
+j}^{}\px[s]{x}[ik]\mu_{x+s}^{kj}\dd{s})\px[t-s]{x+s}[\overline{jj}]\) is the
+probability of being in the state \(j\) \faIcon{at} time \(t\), by entering
+state \(j\) in the time interval \([s,s+\dd{s}]\) and then staying in the state
+\(j\) until time \(t\).  ``Summing'' over every time point \(s\) between time
+\(0\) and time \(t\) would then involve all the paths for being in the state
+\(j\) \faIcon{at} time \(t\).
+
+\begin{note}
+For paths which enter the state \(j\) multiple times between time \(0\) and
+time \(t\), they would be covered by the probability expression for time point
+\(s\) which equals the \emph{last} time of entry to the state \(j\).
+\end{note}
+\begin{center}
+\begin{tikzpicture}
+\node[] () at (0,5) {Time \(0\)};
+\node[] () at (2,5) {Time \(t_1\)};
+\node[] () at (6,5) {Time \(t_2\)};
+\node[violet, draw] () at (9,5) {Time \(s\)};
+\node[] () at (12,5) {Time \(t\)};
+\node[draw] () at (0,2) {State \blc{\(2\)}};
+\node[draw] () at (2,3) {State \(3\)};
+\node[draw] () at (6,1) {State \(1\)};
+\node[draw] () at (9,3) {State \(3\)};
+\node[draw] () at (12,3) {State \mgc{\(3\)}};
+\draw[-Latex, orange] (0.8,2) -- (2,2) -- (2,2.7);
+\draw[-Latex, orange] (2.8,3) -- (6,3) -- (6,1.3);
+\draw[-Latex, orange] (6.8,1) -- (9,1);
+\draw[-Latex, violet] (9,1) --node[midway, right]{\(\mu_{x+s}^{13}\dd{s}\)} (9,2.7);
+\draw[-Latex, brown!50!black] (9.8,3) --node[midway, above]{\(\px[t-s]{x+s}[\overline{33}]\)} node[midway, below]{stay} (11.2,3);
+\draw[very thick, decorate,decoration={mirror, calligraphic brace, amplitude=5pt, raise=5pt}] (0,0.5) -- (9,0.5)
+node[midway, below=0.3cm, orange]{\(\px[s]{x}[21]\)};
+\end{tikzpicture}
+\end{center}
+Several specialized and simplified versions of this general transition
+probability formula will appear in
+\Cref{sect:mult-decr-models,sect:mult-life-models}.
+\end{enumerate}
+\subsection{Insurance and Annuity EPV Calculations}
+\label{subsect:mult-state-insur-ann-epv}
+\begin{enumerate}
+\item After having the (somewhat lengthy) discussion about probabilistic
+calculations in multiple state models, we are now prepared for calculating
+insurance and annuity EPVs. Here we avoid using the terms ``\underline{life}
+insurance'' and ``\underline{life} annuity'' because the insurance and annuity
+in multiple state model are \emph{not necessarily} \underline{life} contingent
+anymore. We can only say that they are \underline{state} contingent in general.
+
+\item \textbf{Applications of multiple state model.} An
+\emph{insurance} here may provide a benefit\footnote{Note that we do not use
+the term ``death benefit'' or ``survival/endowment benefit'' here!} at the end
+of year of each entry to a state \(k\). Depending on what state \(k\)
+represents, the insurance can be interpreted differently, e.g.:
+\begin{itemize}
+\item \emph{\(\text{State \(k\)}=\text{Dead}\)}: Life insurance
+\item \emph{\(\text{State \(k\)}=\text{Permanently Disabled}\):} Disability insurance
+\item \emph{\(\text{State \(k\)}=\text{Sick}\):} Health insurance
+\item \(\vdots\)
+\end{itemize}
+\begin{center}
+\begin{tikzpicture}
+\node[draw, minimum width=3cm, minimum height=1cm] () at (0,0) {Healthy (0)};
+\node[draw, minimum width=3cm, minimum height=1cm] () at (6,0) {Sick (1)};
+\node[draw, minimum width=3cm, minimum height=1cm] () at (3,-2) {Dead (2)};
+\draw[-Latex] (1.5,0.3) -- (4.5,0.3);
+\draw[-Latex] (4.5,-0.3) -- (1.5,-0.3);
+\draw[-Latex] (0,-0.5) -- (2.5,-1.5);
+\draw[-Latex] (6,-0.5) -- (3.5,-1.5);
+\end{tikzpicture}
+\end{center}
+
+Likewise, an \emph{annuity} here may provide level benefit payments at the
+start of each year whenever the annuitant is in a state \(j\), and there is a
+high flexibility in the nature of annuity, based on the setting of state \(j\).
+For example:
+\begin{itemize}
+\item \emph{\(\text{State \(j\)}=\text{Alive}\):} Life annuity
+\item \emph{\(\text{State \(j\)}=\text{Temporarily Disabled}\):} Disability income benefits
+\item \emph{\(\text{State \(j\)}=\text{Retired}\):} Pension (more in STAT3956)
+\item \(\vdots\)
+\end{itemize}
+From this, we can see that multiple state model provides a general framework for
+working with many types of insurance and annuity products, through ``life
+contingencies'' concepts and methods.
+
+\item \textbf{Terminologies.} Like STAT3901, the two main types of
+state-contingent insurances and annuities are (i) \emph{discrete} and (ii)
+\emph{continuous}, which are defined by:
+\begin{itemize}
+\item \defn{Discrete insurance}: Benefit is paid at the end of year of
+\textbf{each} entry to a state, within policy term.
+\item \defn{Continuous insurance}: Benefit is paid at \textbf{each} entry to a state, within policy term.
+\item \defn{Discrete annuity-due}: Benefit is paid at the start of each year
+whenever the annuitant is in a state, within policy term.
+\item \defn{Continuous annuity}: Benefit is paid continuously while the
+annuitant is in a state, within policy term.
+\end{itemize}
+\begin{warning}
+There can be \emph{multiple} insurance benefit payments in multiple state
+model, unlike the case in STAT3901!
+\end{warning}
+
+For simplicity, here we will not deal with the \(1/m\)thly case, although
+insurance and annuity EPVs in such case can be developed in a similar fashion.
+
+\item \textbf{EPV notations.} Like STAT3901, we have some notations for EPV of
+various insurances and annuities. Again, we shall assume that the amount of
+each benefit payment (for discrete case) or the rate of benefit payment (for
+continuous case) is \(1\).
+
+Comparing with the EPV notations in STAT3901, the EPV notations here have extra
+\emph{superscripts} which carry information about the \emph{states} involved.
+For example, the notation \(\Ax{x}[\blc{i}\mgc{k}]\) denotes the EPV of
+discrete whole life insurance for a life aged \(x\) \underline{currently in
+state \blc{\(i\)}}, which pays a benefit of \(1\) at the end of year of
+\textbf{each} \underline{entry to state \mgc{\(k\)}}.
+
+\item \label{it:mult-state-epv-fmlas} \textbf{EPV formulas.} The EPV formulas can all be developed using the
+general EPV calculation formula we learn in STAT3901, demonstrating its high
+utility \faIcon[regular]{thumbs-up}:
+\[
+\text{EPV}=\underset{\text{all possible payment times}}{\sum\text{ or }\int}\brc{\text{benefit amount}}\times\vc{\text{discount factor}}\times\mgc{\text{prob.\ of triggering payment}}.
+\]
+
+Based on this general formula, we can obtain the following more frequently used
+EPV formulas:
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Type&Discrete&Continuous \\
+\midrule
+Permanent insurance&
+\(\displaystyle \Ax{x}[ik]=\sum_{t=0}^{\infty}\vc{v^{t+1}}\mgc{\qty(\sum_{j\ne k}^{}\px[t]{x}[ij]\px{x+t}[jk])}\)
+&\(\displaystyle \Ax*{x}[ik]=\int_{0}^{\infty}\vc{e^{-\delta t}}\mgc{\sum_{j\ne k}^{}\px[t]{x}[ij]\mu_{x+t}^{jk}\dd{t}}\) \\
+Permanent annuity&
+(due) \(\displaystyle \ax**{x}[ij]=\sum_{t=0}^{\infty}\vc{v^{t}}\mgc{\px[t]{x}[ij]} \)
+& \(\displaystyle \ax*{x}[ij]=\int_{0}^{\infty}\vc{e^{-\delta t}}\mgc{\px[t]{x}[ij]}\brc{\dd{t}} \)
+\\
+\(n\)-year term insurance&
+\(\displaystyle \Ax{\endowxn}[ik]
+=\sum_{t=0}^{\blc{n-1}}\vc{v^{t+1}}\mgc{\qty(\sum_{j\ne k}^{}\px[t]{x}[ij]\px{x+t}[jk])}\)
+&\(\displaystyle \Ax*{\endowxn}[ik]
+=\int_{0}^{\blc{n}}\vc{e^{-\delta t}}\mgc{\sum_{j\ne k}^{}\px[t]{x}[ij]\mu_{x+t}^{jk}\dd{t}}\) \\
+\(n\)-year temporary annuity&
+(due) \(\displaystyle \ax**{\endowxn}[ij]=\sum_{t=0}^{\blc{n-1}}\vc{v^{t}}\mgc{\px[t]{x}[ij]}\)
+& \(\displaystyle \ax*{\endowxn}[ij]=\int_{0}^{\blc{n}}\vc{e^{-\delta t}}\mgc{\px[t]{x}[ij]}\brc{\dd{t}} \)
+\\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{remark}
+\item Recall that \emph{entering} a state \(k\) means transiting to state \(k\) from
+a \emph{different} state!
+\item There is not a ``\(1\)'' on top of \(x\) in the  notations for \(n\)-year term
+insurance, to avoid making the notations clumsy. Note that in a general
+multiple state model (not necessarily alive-dead model), we do not have a
+notation for denoting the EPV of an ``\(n\)-year endowment insurance''. We do
+have ``annuity-insurance formula'' either.
+
+In general, for calculating EPV of an ``unfamiliar'' policy (not in the list
+above), we need to start with the general EPV calculation formula above.
+
+\item Since multiple insurance benefit payments are possible, it is possible
+for the insurance EPV to \emph{exceed \(1\)}, unlike the case in STAT3901.
+\end{remark}
+
+
+\item \label{it:mult-state-epv-recursive-fmlas} \textbf{Recursive formulas for EPVs.} Apart from the EPV calculation
+formulas above, another type of formula that is of interest is the
+\emph{recursive formulas} for EPVs. The good \faIcon[regular]{thumbs-up} thing
+is that the recursive formulas here do have similar form as the ones we learn
+in STAT3901. But the ``bad'' \faIcon[regular]{thumbs-down} thing is that care
+must be taken when writing down the recursive formulas, to ensure that the
+transitions between states are correctly handled. We can't simply write down
+``\(\Ex[n]{x}\)'' without thought anymore! Nonetheless, this should not be an issue if
+you can gain an \emph{intuitive} understanding of the recursive formulas below.
+\begin{note}
+In the following, \(\sum_{j}^{}\) denotes the sum over every state \(j\).
+\end{note}
+\begin{itemize}
+\item \emph{(more commonly used) Permanent insurance:}
+\begin{itemize}
+\item \emph{(discrete)} \(\Ax{x}[\blc{i}\mgc{k}]
+=\Ax{\endowxn}[\blc{i}\mgc{k}]+\sum_{j}^{}v^{n}\px[n]{x}[\blc{i}j]\Ax{x+n}[j\mgc{k}]
+\overset{(n=1)}{=}v\px[]{x}[\blc{i}\mgc{k}]+\sum_{j}^{}v\px[]{x}[\blc{i}j]\Ax{x+1}[j\mgc{k}]\).
+\item \emph{(continuous)} \(\Ax*{x}[\blc{i}\mgc{k}]=\Ax*{\endowxn}[\blc{i}\mgc{k}]
++\sum_{j}^{}v^{n}\px[n]{x}[\blc{i}j]\Ax*{x+n}[j\mgc{k}]\).
+\end{itemize}
+\begin{center}
+\begin{tikzpicture}
+\draw[-Latex] (0,-1) -- (10,-1) node[right]{Time};
+\fill[] (0,-1) circle [radius=0.05]
+node[below] {0}
+node[above=0.1cm] {\((x)\)};
+\node[draw] (start) at (0,0.5) {State \blc{\(i\)}};
+\fill[] (3,-1) circle [radius=0.05]
+node[below] {\(n\)};
+\draw[->] (0,-1.5) --node[midway, below]{\(\Ax*{\endowxn}[\blc{i}\mgc{k}]\)} (3,-1.5);
+\foreach \x in {0,...,2} {
+\node[draw] () at (3,\x) {State \x};
+\draw[->] (3,\x) --node[midway, above]{\(\Ax*{x+n}[\x\mgc{k}]\)} (9.5,\x);
+\draw[-Latex, color=ForestGreen] (3,\x) to[bend right] node[midway, black] {\(\times v^{n}\px[n]{x}[\blc{i}\x]\)} (0,0.6);
+}
+\end{tikzpicture}
+\end{center}
+\item \emph{(more commonly used) Permanent annuity:}
+\begin{itemize}
+\item \emph{(discrete, due)} \(\ax**{x}[\blc{i}\mgc{k}]
+=\ax**{\endowxn}[\blc{i}\mgc{k}]+\sum_{j}^{}v^{n}\px[n]{x}[\blc{i}j]\ax**{x+n}[j\mgc{k}]
+\overset{(n=1)}{=}\delta_{\blc{i}\mgc{k}}+\sum_{j}^{}v\px[]{x}[\blc{i}j]\ax**{x+1}[j\mgc{k}]\).
+\item \emph{(continuous)} \(
+\ax*{x}[\blc{i}\mgc{k}]
+=\ax*{\endowxn}[\blc{i}\mgc{k}]+\sum_{j}^{}v^{n}\px[n]{x}[\blc{i}j]\ax*{x+n}[j\mgc{k}]
+\).
+\end{itemize}
+\begin{center}
+\begin{tikzpicture}
+\draw[-Latex] (0,-1) -- (10,-1) node[right]{Time};
+\fill[] (0,-1) circle [radius=0.05]
+node[below] {0}
+node[above=0.1cm] {\((x)\)};
+\node[draw] (start) at (0,0.5) {State \blc{\(i\)}};
+\fill[] (3,-1) circle [radius=0.05]
+node[below] {\(n\)};
+\draw[->] (0,-1.5) --node[midway, below]{\(\ax*{\endowxn}[\blc{i}\mgc{k}]\)} (3,-1.5);
+\foreach \x in {0,...,2} {
+\node[draw] () at (3,\x) {State \x};
+\draw[->] (3,\x) --node[midway, above]{\(\ax*{x+n}[\x\mgc{k}]\)} (9.5,\x);
+\draw[-Latex, color=ForestGreen] (3,\x) to[bend right] node[midway, black] {\(\times v^{n}\px[n]{x}[\blc{i}\x]\)} (0,0.6);
+}
+\end{tikzpicture}
+\end{center}
+\item \emph{\(n\)-year term insurance:}
+\begin{itemize}
+\item \emph{(discrete)} \(\Ax{\endowxn}[\blc{i}\mgc{k}]
+\overset{(m\le n)}{=}\Ax{x:\angl{m}}[\blc{i}\mgc{k}]
++\sum_{j}^{}v^{m}\px[m]{x}[\blc{i}j]\Ax{x+m:\angl{n-m}}[j\mgc{k}]
+\overset{(m=1)}{=}v\px[]{x}[\blc{i}\mgc{k}]+\sum_{j}^{}v\px[]{x}[\blc{i}j]\Ax{x+1:\angl{n-1}}[j\mgc{k}]\).
+\item \emph{(continuous)} \(\Ax*{\endowxn}[\blc{i}\mgc{k}]
+\overset{(m\le n)}{=}\Ax*{x:\angl{m}}[\blc{i}\mgc{k}]
++\sum_{j}^{}v^{m}\px[m]{x}[\blc{i}j]\Ax*{x+m:\angl{n-m}}[j\mgc{k}]\).
+\end{itemize}
+\item \emph{\(n\)-year temporary annuity:}
+\begin{itemize}
+\item \emph{(discrete, due)} \(\ax**{\endowxn}[\blc{i}\mgc{k}]
+\overset{(m\le n)}{=}\ax**{x:\angl{m}}[\blc{i}\mgc{k}]+\sum_{j}^{}v^{m}\px[m]{x}[\blc{i}j]\ax**{x+m}[j\mgc{k}]
+\overset{(m=1)}{=}\delta_{\blc{i}\mgc{k}}+\sum_{j}^{}v\px[]{x}[\blc{i}j]\ax**{x+1:\angl{n-1}}[j\mgc{k}]\).
+\item \emph{(continuous)} \(
+\ax*{\endowxn}[\blc{i}\mgc{k}]
+\overset{(m\le n)}{=}\ax*{x:\angl{m}}[\blc{i}\mgc{k}]
++\sum_{j}^{}v^{m}\px[m]{x}[\blc{i}j]\ax*{x+m:\angl{n-m}}[j\mgc{k}]
+\).
+\end{itemize}
+\end{itemize}
+\item \textbf{Waiting period.} For annuity benefits like disability income
+benefits, the benefits are often not paid \emph{immediately} at the onset of
+the disability (the event covered). The time between the event onset and the
+start of benefit payments is called the \defn{waiting period}. One reason for
+having waiting period is to give the insurer some time to verify the
+policyholder's eligibility for the benefit payments (e.g., check
+\faIcon{search} the documents to see whether he is really disabled).
+
+With the presence of waiting period, there would be a time delay between the
+time of entry to the target state (e.g., temporarily disabled) and the start of
+the benefit payments. So, we cannot use the ordinary annuities and formulas
+discussed previously to perform calculations about the benefit payments of this
+kind of products.
+
+\item \textbf{Continuous sojourn annuity.} To deal with waiting periods for
+continuous annuities in continuous-time multiple state model, we need to
+introduce a new concept called \emph{continuous sojourn annuity}. It is a
+special annuity designed mainly for theoretical purpose (such kind of annuity
+can hardly be found in practice). The idea is that it serves as a
+``one-time-only'' \underline{continuous} annuity, lasting only for a
+\underline{sojourn} (``short staying period'').
+
+A \defn{continuous sojourn annuity} issued to \((x)\) currently in state \(j\)
+pays benefits (e.g., at rate \(1\)) continuously while \((x)\) stays in state
+\(j\), within policy term; Once \((x)\) leaves state \(j\), the benefits cease
+\textbf{forever}, i.e., there would not be any benefits anymore, even if
+\((x)\) later goes back to state \(j\).
+
+For such continuous sojourn annuity with benefit rate \(1\), the notations are:
+\begin{itemize}
+\item \emph{permanent version:} \(\ax*{x}[\overline{jj}]\).
+\item \emph{\(n\)-year temporary version:} \(\ax*{\endowxn}[\overline{jj}]\).
+\end{itemize}
+Applying the general EPV calculation formula, we get
+\begin{itemize}
+\item \(\displaystyle \ax*{x}[\overline{jj}]=\int_{0}^{\infty}\vc{e^{-\delta t}}
+\mgc{\px[t]{x}[\overline{jj}]}\brc{\dd{t}}\).
+\item \(\displaystyle \ax*{\endowxn}[\overline{jj}]=\int_{0}^{n}\vc{e^{-\delta t}}
+\mgc{\px[t]{x}[\overline{jj}]}\brc{\dd{t}}\).
+\end{itemize}
+
+\item \label{it:wait-cts-ann-inej} \textbf{Incorporating waiting periods.}
+Using the concept of \emph{continuous sojourn annuity}, we can apply the
+general EPV calculation formula (so useful!) to incorporate waiting periods.
+First we consider a continuous permanent annuity issued to \((x)\) currently in
+state \(i\), with benefit rate \(1\) payable continuously while \((x)\) is in
+state \(j\), and waiting period \(w\) years (applicable for \textbf{each} entry
+to state \(j\)).
+
+When \rc{\(i\ne j\)}, we have
+\[
+\boxed{\text{EPV}=\int_{0}^{\infty}\brc{\qty(\ax*{x+t}[\overline{jj}]-\ax*{x+t:\angl{w}}[\overline{jj}])}
+\vc{e^{-\delta t}}\mgc{\sum_{k\ne j}^{}\px[t]{x}[ik]\mu_{x+t}^{kj}\dd{t}}}.
+\]
+To better understand this, consider:
+\begin{itemize}
+\item ``All possible payment times'' start at time \(0\) with no end, so we have ``\(\int_{0}^{\infty}\)''.
+\item \vc{Discount factor} \faIcon{at} time \(t\) is \vc{\(e^{-\delta t}\)}.
+\item \mgc{Probability of triggering payment}\footnote{Here the ``payment'' is
+indeed possibly zero due to the presence of waiting period.} \faIcon{at} time
+\(t\) is loosely \(\mgc{\sum_{k\ne j}^{}\px[t]{x}[ik]\mu_{x+t}^{kj}\dd{t}}\),
+which is the probability of \underline{entering} state \(j\) in
+\([t,t+\dd{t}]\), which ``generates'' a fresh permanent continuous sojourn
+annuity.
+\item \brc{Benefit amount} \faIcon{at} time \(t\) is the time-\(t\) EPV of the
+``newly generated'' continuous sojourn annuity \faIcon{at} time \(t\), namely
+\brc{\(\ax*{x+t}[\overline{jj}]
+-\underbrace{\ax*{x+t:\angl{w}}[\overline{jj}]}_{\mathclap{\text{no benefits in the waiting period}}}\)}.
+
+\begin{note}
+Since we are computing EPV, it would not make any difference to replace the
+continuous stream of payments from the continuous sojourn annuity by a single
+payment of amount equal to the EPV of that payment stream \faIcon{at} time \(t\).
+This is exactly the replacement we have done here.
+\end{note}
+\end{itemize}
+
+When we change the policy term to \(n\) years, we can simply change
+\(\int_{0}^{\infty}\to\int_{0}^{n}\) in the formula above.
+\begin{center}
+\begin{tikzpicture}
+\node[] () at (0,4.7) {0};
+\fill[] (0,5) circle [radius=0.05];
+\draw[-Latex] (0,5) -- (13,5) node[right=0.2cm]{Time};
+\draw[yellow, opacity=0.5, line width=0.2cm] (3.6,5) -- (6,5);
+\draw[yellow, opacity=0.5, line width=0.2cm] (10.6,5) -- (12,5);
+\draw[pen colour=blue, very thick, decorate,decoration={calligraphic brace, amplitude=5pt, raise=5pt}] (2,5) -- (3.6,5)
+node[midway, above=0.3cm, blue]{waiting period};
+\draw[pen colour=blue, very thick, decorate,decoration={calligraphic brace, amplitude=5pt, raise=5pt}] (9,5) -- (10.6,5)
+node[midway, above=0.3cm, blue]{waiting period};
+\node[draw] () at (0,2) {State \(2\)};
+\node[draw] () at (2,3) {State \(3\)};
+\node[draw] () at (6,1) {State \(1\)};
+\node[draw] () at (9,3) {State \(3\)};
+\node[draw] () at (12,0) {State \(0\)};
+\draw[-Latex] (0.8,2) -- (2,2) -- (2,2.7);
+\draw[-Latex] (2.8,3) -- (6,3) -- (6,1.3);
+\draw[-Latex] (6.8,1) -- (9,1) -- (9,2.7);
+\draw[-Latex] (9.8,3) -- (12,3) -- (12,0.3);
+\end{tikzpicture}
+\end{center}
+
+
+\item \label{it:wait-cts-ann-ieqj} \textbf{Adjustment for \(i=j\) case.}
+When \rc{\(i=j\)}, more care is needed \warn{}.  Since the formula above
+focuses on continuous sojourn annuities ``newly generated'' at each entry to
+state \(j\), it would \rc{miss} the potential payments made immediately after
+the first waiting period starting now, which do not require any \emph{entry} to
+state \(j\) (as the life is already in state \(j\) at the start). This issue is
+illustrated below.
+\begin{center}
+\begin{tikzpicture}
+\node[] () at (0,4.7) {0};
+\fill[] (0,5) circle [radius=0.05];
+\draw[-Latex] (0,5) -- (13,5) node[right=0.2cm]{Time};
+\draw[yellow, opacity=0.5, line width=0.2cm] (1.6,5) -- (2.5,5);
+\draw[yellow, opacity=0.5, line width=0.2cm] (5.1,5) -- (6,5);
+\draw[yellow, opacity=0.5, line width=0.2cm] (10.6,5) -- (12,5);
+\draw[red, dashed] (2.05,5) ellipse [x radius=0.6cm, y radius=0.4cm];
+\node[] () at (2.05,4.3) {missed in the formula \warn{}};
+\draw[pen colour=blue, very thick, decorate,decoration={calligraphic brace, amplitude=5pt, raise=5pt}] (0,5) -- (1.6,5)
+node[midway, above=0.3cm, blue]{waiting period};
+\draw[pen colour=blue, very thick, decorate,decoration={calligraphic brace, amplitude=5pt, raise=5pt}] (3.5,5) -- (5.1,5)
+node[midway, above=0.3cm, blue]{waiting period};
+\draw[pen colour=blue, very thick, decorate,decoration={calligraphic brace, amplitude=5pt, raise=5pt}] (9,5) -- (10.6,5)
+node[midway, above=0.3cm, blue]{waiting period};
+\node[draw] () at (0,3) {State \(3\)};
+\node[draw] () at (2.5,2) {State \(2\)};
+\node[draw] () at (3.5,3) {State \(3\)};
+\node[draw] () at (6,1) {State \(1\)};
+\node[draw] () at (9,3) {State \(3\)};
+\node[draw] () at (12,0) {State \(0\)};
+\draw[-Latex] (0.8,3) -- (2.5,3) -- (2.5,2.3);
+\draw[-Latex] (3.3,2) -- (3.5,2) -- (3.5,2.7);
+\draw[-Latex] (4.3,3) -- (6,3) -- (6,1.3);
+\draw[-Latex] (6.8,1) -- (9,1) -- (9,2.7);
+\draw[-Latex] (9.8,3) -- (12,3) -- (12,0.3);
+\end{tikzpicture}
+\end{center}
+Consequently, to calculate the correct EPV when \(i=j\), we need to add an
+extra term \(\brc{\ax*{x}[\overline{jj}]-\ax*{x:\angl{w}}[\overline{jj}]}\),
+which accounts for the EPV of the missed potential payments. That is, the
+formula becomes:
+\begin{itemize}
+\item \emph{(permanent annuity)}
+\[
+\boxed{\text{EPV}=\brc{\ax*{x}[\overline{jj}]-\ax*{x:\angl{w}}[\overline{jj}]}+
+\int_{0}^{\infty}\brc{\qty(\ax*{x+t}[\overline{jj}]-\ax*{x+t:\angl{w}}[\overline{jj}])}
+\vc{e^{-\delta t}}\mgc{\sum_{k\ne j}^{}\px[t]{x}[ik]\mu_{x+t}^{kj}\dd{t}}}.
+\]
+\item \emph{(\(n\)-year annuity)}
+\[
+\boxed{\text{EPV}=\brc{\ax*{x}[\overline{jj}]-\ax*{x:\angl{w}}[\overline{jj}]}+
+\int_{0}^{n}\brc{\qty(\ax*{x+t}[\overline{jj}]-\ax*{x+t:\angl{w}}[\overline{jj}])}
+\vc{e^{-\delta t}}\mgc{\sum_{k\ne j}^{}\px[t]{x}[ik]\mu_{x+t}^{kj}\dd{t}}}.
+\]
+\end{itemize}
+The formula can still be explained using the terminologies in the general EPV
+calculation formula, since we can treat the added term as representing a single
+payment made \faIcon{at} time \(0\) with amount equal to
+\(\ax*{x}[\overline{jj}]-\ax*{x:\angl{w}}[\overline{jj}]\) (possibly zero). The
+discount factor is \vc{\(1\)} and the probability of having this payment is
+\mgc{\(1\)} (as the life is known to be in state \(j\) now).
+\end{enumerate}
+\subsection{Premium and Policy Value Calculations}
+\begin{enumerate}
+\item Using the formulas for various insurance and annuity EPVs in
+\Cref{subsect:mult-state-insur-ann-epv}, we can compute net/gross premiums via
+equivalence principle, like what we did in STAT3901. On the other hand, for
+policy values, although the idea behind is still similar to the STAT3901 case,
+adjustments are needed to incorporate the effects on policy values from
+different \emph{states}. So we will focus on policy values from now on.
+
+\item In STAT3901, the time-\(t\) policy value is defined by
+\begin{itemize}
+\item \emph{time-\(t\) net premium policy value:}
+\[\Vx[t]{}[n]
+=\epvt{t}{\text{future benefits}}-\epvt{t}{\text{future \textbf{net} premiums}}.\]
+\item \emph{time-\(t\) gross premium policy value:}
+\[\Vx[t]{}[g]
+=\epvt{t}{\text{future benefits and expenses}}-\epvt{t}{\text{future \textbf{gross} premiums}}.\]
+\end{itemize}
+Particularly, it is assumed that the policy is still in force \faIcon{at} time
+\(t\), i.e., the underlying life is \underline{alive} \faIcon{at} time \(t\).
+Using the alive-dead model terminologies, it means that we assume the life is
+\underline{in state \(0\)} \faIcon{at} time \(t\).
+
+\item \textbf{Motivation.} For the policies in STAT3901, being in force
+\faIcon{at} time \(t\) is equivalent to being \underline{in state \(0\)}
+\faIcon{at} time \(t\). But in a more general multiple state model, this is not
+necessarily the case. When we just know that the policy is in force \faIcon{at}
+time \(t\), there can still be multiple possible states for the life. This
+would pose difficulties and complications in our calculations as the formulas
+discussed previously depend on a \underline{single} starting state only.
+
+Therefore, to be more compatible with our previous formulas and discussions,
+here we shall also define time-\(t\) policy value to be dependent on the
+starting state.
+
+\item \textbf{Definition.} The time-\(t\) policy value for life in
+\underline{state \(j\)} \faIcon{at} time \(t\) is defined by:
+\begin{itemize}
+\item \emph{time-\(t\) \defn{net premium policy value}:}
+\[
+\epvtj{t}{j}{\text{future benefits}}-\epvtj{t}{j}{\text{future \textbf{net} premiums}}.\]
+\item \emph{time-\(t\) \defn{gross premium policy value}:}
+\[
+\epvtj{t}{j}{\text{future benefits and expenses}}-\epvtj{t}{j}{\text{future \textbf{gross} premiums}}.\]
+\end{itemize}
+Here \(\epvtj{t}{j}{\cdot}\) denotes the time-\(t\) EPV with the starting
+(time-\(t\)) state being \underline{state \(j\)}. To avoid complicating the
+notations, we usually just use the notation \(\Vx[t]{}[(j)]\) to denote both the
+net premium and gross premium policy values. We should be able to tell which is
+being considered from the context (usually we are considering gross premium
+policy value).
+
+Intuitively, we would expect that \(\Vx[t]{}[(j)]\) could be quite different
+for different states \(j\), even if the time \(t\) remains fixed. For instance,
+for a whole life insurance, if we set state \(0\) as ``healthy'' \faIcon{child} and state
+\(1\) as ``ill'' \faIcon{head-side-mask}, it is natural to expect that
+\(\Vx[t]{}[(1)]\) would be higher than \(\Vx[t]{}[(0)]\), since a sick person
+\faIcon{head-side-mask} should be more likely to die \faIcon{skull} early than
+a healthy person \faIcon{child}, which raises the reserve for sick individual.
+
+\item \label{it:mult-state-basic-policy-val-recurs} \textbf{Basic policy value
+recursion.} Like STAT3901, we are interested in developing some recursive
+formulas for policy values. To start with, let us consider the basic policy
+value version, which involves only annual time points and is for
+\emph{discrete} policies.  The ``slogan'' introduced in the STAT3901 study
+notes (``what you have is what you need'', or WYHIWYN) still applies, and leads
+to the following recursive formula:
+\[
+\boxed{\underbrace{\qty(\Vx[t]{}[(j)]+G_t^{(j)}-e_t^{(j)})(1+i)}_{\text{what you have}}
+=\underbrace{\sum_{\text{all states \(k\)}}^{}\px{x+t}[jk]
+\qty(B_{t+1}^{(k)}+E_{t+1}^{(k)}+\Vx[t+1]{}[(k)])}_{\text{what you need (expected)}}}
+\]
+(\(t\) is an integer time point). Clumsier notations appear here as the
+quantities depend on state:
+\begin{itemize}
+\item \(G_t^{(j)}\): gross premium \faIcon{at} time \(t\), for life
+\underline{in state \(j\)} at that time
+\item \(e_t^{(j)}\): sum of initial and renewal expenses \faIcon{at} time
+\(t\), for life \underline{in state \(j\)} \faIcon{at} that time
+\item \(B_{t+1}^{(k)}\): amount of benefits payable \faIcon{at} time \(t+1\) for
+life \underline{in state \(k\)} at that time, including: \warn{}
+\begin{itemize}
+\item \emph{(insurance type benefit)} benefit paid because the life enters state \(k\) in the year \(t+1\)
+\item \emph{(annuity type benefit)} benefit paid because the life is in state
+\(k\) \faIcon{at} time \(t+1\) (start of year \(t+2\))
+\begin{note}
+In case there is expense associated to the \underline{annuity type} benefit
+\emph{(seldom the case)}, we can incorporate the expense by adding it on top of
+the amount of annuity type benefit.
+\end{note}
+\end{itemize}
+\item \(E_{t+1}^{(k)}\): amount of the settlement expense associated to the
+\underline{insurance type} benefit payable \faIcon{at} time \(t+1\) for life
+\underline{in state \(k\)} at that time (as suggested above)
+\end{itemize}
+
+This generalizes the basic policy recursive formula \((\Vx[t]{}+G_t-e_t)(1+i)=
+\qx{x+t}(S_{t+1}+E_{t+1})+\px{x+t}(\Vx[t+1]{}[])\) (for life insurance)  in
+STAT3901, since by considering the alive-dead model, we can express it as
+\[
+(\Vx[t]{}[(0)]+G_t^{(0)}-e_t^{(0)})(1+i)=\px{x+t}[01](B_{t+1}^{(1)}+E_{t+1}^{(1)}+\underbrace{\Vx[t+1]{}[(1)]}_{0})
++\px{x+t}[00](\underbrace{B_{t+1}^{(0)}+E_{t+1}^{(0)}}_{0}+\Vx[t+1]{}[(0)]).
+\]
+The following picture illustrates the basic policy value recursive formula in
+multiple state model setting above.
+\begin{center}
+\begin{tikzpicture}
+\draw[] (0,0) rectangle (2,1);
+\node[] () at (1, 1.9) {(amount reserved \faIcon{at} time \(t\))};
+\node[] () at (1, 1.4) {\(\Vx[t]{}[(j)]\)};
+\draw[->, ForestGreen, line width=0.3mm] (0.6,-0.5) to (0.6,0.2);
+\node[ForestGreen] () at (0.6,-0.8) {\(G_t^{(j)}\)};
+\draw[->, red, line width=0.3mm] (1.4,0.2) to (1.4,-0.5);
+\node[red] () at (1.4,-0.8) {\(e_t^{(j)}\)};
+\node[draw] (start) at (1, -1.4) {State \(j\)};
+\draw[-Latex, blue] (1,0.5) to[bend left] node[midway, auto]{\(\times (1+i)\)} (7,0.5);
+\draw[] (4,-0.5) rectangle (10,1);
+\node[] () at (11.5,0.25) {(what you have)};
+\node[] () at (7,0.25) {\((\Vx[t]{}[(j)]+G_t^{(j)}-e_t^{(j)})(1+i)\)};
+\node[rotate=90] () at (7,-1) {\faIcon{equals}};
+\node[] () at (11.5,-3.5) {(what you need)};
+\foreach \x in {0,...,3} {
+\node[draw] () at (5, \x-5) {State \x};
+\draw[-Latex] (start) --node[midway]{\(\px{x+t}[j\x]\)} (4.3,\x-5);
+\node[] () at (8, \x-5) {\(B_{t+1}^{(\x)}+E_{t+1}^{(\x)}+\Vx[t+1]{}[(\x)]\)};
+}
+\draw[] (4,-6) rectangle (10,-1.5);
+\end{tikzpicture}
+\end{center}
+
+\item \textbf{``NAAR'' form of basic policy value recursion.} Similar to
+STAT3901, we can reorganize the terms in the basic policy value recursive
+formula above to obtain its ``net amount at risk (NAAR)''\footnote{Strictly
+speaking, in general multiple state model, the previous interpretation for NAAR
+may not apply anymore, as we may not be considering ``dying''.} form:
+\[
+\overset{\text{(what you have)}}{\qty(\Vx[t]{}[(j)]+G_t^{(j)}-e_t^{(j)})(1+i)}
+=\overset{\text{(what you need)}}{\Vx[t+1]{}[(j)]+B_{t+1}^{(j)}+E_{t+1}^{(j)}+
+\sum_{k\ne j}^{}\px{x+t}[jk]
+\underbrace{\qty(B_{t+1}^{(k)}+E_{t+1}^{(k)}+\Vx[t+1]{}[(k)]-\Vx[t+1]{}[(j)])}_{\text{``NAAR''}}},
+\]
+which follows from rewriting
+\[
+\px{x+t}[jj]\qty(\Vx[t+1]{}[(j)])
+=\qty(1-\sum_{k\ne j}^{}\px{x+t}[jk])\qty(\Vx[t+1]{}[(j)])
+=\Vx[t+1]{}[(j)]-\sum_{k\ne j}^{}\px{x+t}[jk]\qty(\Vx[t+1]{}[(j)])
+\]
+in the sum on the RHS of the original recursive formula.
+
+The ``NAAR'' can be interpreted as the additional amount of money needed over
+the reserve available for the case when the life goes to state \(j\)
+(\(\Vx[t+1]{}[(j)]\)), in case the life goes to state \(k\ne j\) rather than
+state \(j\) ``surprisingly''.
+
+Thus, this recursive formula in ``NAAR'' form partitions ``what you need'' into
+(i) amount needed (payment and reserve) when the life goes to state \(j\) and
+(ii) extra amount needed over the reserve for going to state \(j\), as a
+provision for the scenarios where the life goes to another state \(k\ne j\).
+
+Again, this generalizes the NAAR form of basic policy recursive formula in
+STAT3901, namely\\
+\((\Vx[t]{}[]+G_t-e_t)(1+i)=\Vx[t+1]{}[]+\qx{x+t}(S_{t+1}+E_{t+1}-\Vx[t+1]{}[])\),
+because we can express it as
+\[
+(\Vx[t]{}[(0)]+G_t^{(0)}-e_t^{(0)})(1+i)=\underbrace{B_{t+1}^{(0)}+E_{t+1}^{(0)}}_{0}+\Vx[t+1]{}[(0)]
++\px{x+t}[01](B_{t+1}^{(1)}+E_{t+1}^{(1)}+\underbrace{\Vx[t+1]{}[(1)]}_{0}-\Vx[t+1]{}[(0)])
+\]
+by considering the alive-dead model.
+
+The following picture illustrates this recursive formula in ``NAAR'' form (with
+\(j=3\)):
+\begin{center}
+\begin{tikzpicture}
+\draw[] (0,0) rectangle (2,1);
+\node[] () at (1, 1.4) {\(\Vx[t]{}[(3)]\)};
+\draw[->, ForestGreen, line width=0.3mm] (0.6,-0.5) to (0.6,0.2);
+\node[ForestGreen] () at (0.6,-0.8) {\(G_t^{(3)}\)};
+\draw[->, red, line width=0.3mm] (1.4,0.2) to (1.4,-0.5);
+\node[red] () at (1.4,-0.8) {\(e_t^{(3)}\)};
+\node[draw] (start) at (1, -2) {State \(3\)};
+\draw[-Latex, blue] (1,0.5) to[bend left] node[midway, auto]{\(\times (1+i)\)} (7,0.5);
+\draw[] (4,-0.5) rectangle (10,1);
+\node[] () at (11.5,0.25) {(what you have)};
+\node[] () at (7,0.25) {\((\Vx[t]{}[(3)]+G_t^{(3)}-e_t^{(3)})(1+i)\)};
+\node[rotate=90] () at (7,-1) {\faIcon{equals}};
+\node[] () at (8,-7) {(what you need)};
+\foreach \x in {0,...,2} {
+\node[draw] () at (5, \x-5) {State \x};
+\draw[-Latex] (start) --node[midway]{\(\px{x+t}[3\x]\)} (4.3,\x-5);
+\node[] () at (9, \x-5) {\(B_{t+1}^{(\x)}+E_{t+1}^{(\x)}+\Vx[t+1]{}[(\x)]-\Vx[t+1]{}[(3)]\)};
+}
+\draw[] (4,-6) rectangle (12,-1.5);
+\draw[] (4,-2.5) -- (12,-2.5);
+\node[] () at (8,-2) {\(\Vx[t+1]{}[(3)]+B_{t+1}^{(3)}+E_{t+1}^{(3)}\)};
+\draw[very thick, decorate,decoration={calligraphic brace, amplitude=5pt, raise=0pt}] (12.5,-2.5) -- (12.5,-6)
+node[midway, right=0.2cm, text width=2cm]{extra for ``NAAR'' (expected)};
+\end{tikzpicture}
+\end{center}
+
+\item \textbf{Continuous policy value recursion.} Again, for the sake of
+simplicity, we will not deal with the \(1/m\)thly case here, though recursions
+in such case can be developed in a similar way.  Nevertheless, here we will
+discuss continuous policy value recursion in multiple state model (perhaps
+more complex than the \(1/m\)thly case?  \faIcon[regular]{grin-beam-sweat}). We
+have learnt the continuous policy value recursion in the alive-dead model in
+\Cref{subsect:policy-val-cts-recurs}, which utilizes the \emph{Thiele's
+differential equation}. So, as one may expect, here we are going to generalize
+the Thiele's differential equation to the multiple state model setting.
+
+Like what we did in \Cref{subsect:policy-val-cts-recurs}, we are going to study
+continuous policy value recursion in three steps: (i) motivation, (ii) formula,
+and (iii) intuitive interpretation.
+
+\item \textbf{Motivation.} From the recursive formula in ``NAAR'' form above,
+we can observe that changes in policy values for state \(j\) \(\Vx[t]{}[(j)]\)
+are influenced by multiple factors: (i) \blc{interest}, (ii) \gc{premiums} \&
+\rc{renewal expenses}, (iii) \vc{provision for ``NAAR''}, and \emph{(new!)}
+(iv) \brc{payments \(B_{t+1}^{(j)}+E_{t+1}^{(j)}\) needed upon going to state
+\(j\)}. So, as one may expect, these four factors would come into play in the
+Thiele's differential equation.
+\begin{center}
+\begin{tikzpicture}
+\draw[] (0,0) rectangle (2,1);
+\node[ellipse, draw] () at (1, 1.4) {\(\Vx[t]{}[(3)]\)};
+\draw[->, ForestGreen, line width=0.3mm] (0.6,-0.5) to (0.6,0.2);
+\node[ForestGreen] () at (0.6,-0.8) {\(G_t^{(3)}\)};
+\draw[->, red, line width=0.3mm] (1.4,0.2) to (1.4,-0.5);
+\node[red] () at (1.4,-0.8) {\(e_t^{(3)}\)};
+\node[draw] (start) at (1, -2) {State \(3\)};
+\draw[-Latex, blue] (1,0.5) to[bend left] node[midway, auto]{\(\times (1+i)\)} (7,0.5);
+\draw[] (4,-0.5) rectangle (10,1);
+\node[] () at (11.5,0.25) {(what you have)};
+\node[] () at (7,0.25) {\((\Vx[t]{}[(3)]+G_t^{(3)}-e_t^{(3)})(1+i)\)};
+\node[rotate=90] () at (7,-1) {\faIcon{equals}};
+\node[] () at (8,-7) {(what you need)};
+\foreach \x in {0,...,2} {
+\node[draw] () at (5, \x-5) {State \x};
+\draw[-Latex] (start) --node[midway]{\(\px{x+t}[3\x]\)} (4.3,\x-5);
+\node[violet] () at (9, \x-5) {\(B_{t+1}^{(\x)}+E_{t+1}^{(\x)}+\Vx[t+1]{}[(\x)]-\Vx[t+1]{}[(3)]\)};
+}
+\draw[] (4,-6) rectangle (12,-1.5);
+\draw[] (4,-2.5) -- (12,-2.5);
+\node[ellipse, draw] () at (6.5,-2) {\(\Vx[t+1]{}[(3)]\)};
+\node[] () at (10.5,-2) {\brc{\(B_{t+1}^{(3)}+E_{t+1}^{(3)}\)}};
+\draw[very thick, decorate,decoration={calligraphic brace, amplitude=5pt, raise=0pt}] (12.5,-2.5) -- (12.5,-6)
+node[midway, right=0.2cm, text width=2cm, violet]{provision for ``NAAR''};
+\draw[] (9,-1.5) -- (9,-2.5);
+\end{tikzpicture}
+\end{center}
+
+\item\label{it:thiele-diff-eq-mult-state} \textbf{Thiele's differential
+equation in multiple state model setting.} We shall consider continuous-time
+multiple state model and fully continuous policies here. The \defn{Thiele's
+differential equation} in multiple state model setting is given by
+\[
+\boxed{\dv{}{t}\Vx[t]{}[(j)]=\Vx[t]{}[(j)]\delta_t+G_t^{(j)}-e_{t}^{(j)}-R_t^{(j)}
+-\sum_{k\ne j}^{}\qty(S_{t}^{(jk)}+E_{t}^{(jk)}+\Vx[t]{}[(k)]-\Vx[t]{}[(j)])\mu_{x+t}^{jk}}
+\]
+where:
+\begin{itemize}
+\item \(R_t^{(j)}\) is the time-\(t\) \emph{rate} of \underline{annuity type}
+benefit payments (with the associated expenses added, if any) while the life in
+state \(j\).
+\item \(G_t^{(j)}\) and \(e_t^{(j)}\) are the time-\(t\) rates of premium
+payments and renewal expense payments while the life is in state \(j\), respectively.
+\item \(S_t^{(jk)}\) and \(E_t^{(jk)}\) are the amounts of time-\(t\)
+\underline{insurance type} benefit and the associated settlement expense, made
+when the life enters state \(j\) \faIcon{at} time \(t\), respectively.
+\end{itemize}
+\begin{note}
+Here we assume there is no initial expense.
+\end{note}
+
+\item \textbf{Intuitive interpretation.}
+Like \Cref{subsect:policy-val-cts-recurs}, we integrate both sides from \(0\)
+to a positive value \(s\):
+\[
+\Vx[s]{}[(j)]-\Vx[0]{}[(j)]=
+\int_{0}^{s}\qty(\Vx[t]{}[(j)]\delta_t+G_t^{(j)}-e_{t}^{(j)}-R_t^{(j)}
+-\sum_{k\ne j}^{}\qty(S_{t}^{(jk)}+E_{t}^{(jk)}+\Vx[t]{}[(k)]-\Vx[t]{}[(j)])\mu_{x+t}^{jk})
+\dd{t}.
+\]
+Abusing notations slightly, we write
+\[
+\Vx[s]{}[(j)]=\Vx[0]{}[(j)]+
+\int_{0}^{s}\blc{\Vx[t]{}[(j)]\delta_t\dd{t}}
++(\gc{G_t^{(j)}}-\rc{e_{t}^{(j)}})\dd{t}
+-\brc{R_t^{(j)}\dd{t}}
+-\vc{\sum_{k\ne j}^{}\qty(S_{t}^{(jk)}+E_{t}^{(jk)}+\Vx[t]{}[(k)]-\Vx[t]{}[(j)])\mu_{x+t}^{jk}\dd{t}}
+.
+\]
+The expression in the integral incorporates the effects from all the four
+factors discussed above. Let us elaborate more about the intuition:
+\begin{enumerate}[label={(\arabic*)}]
+\item Starting (time 0) reserve for state \(j\): \(\Vx[0]{}[(j)]\).
+\item In every ``infinitesimal'' time interval \([t,t+\dd{t}]\) between time
+\(0\) and time \(s\):
+\begin{itemize}
+\item \faIcon{plus-circle} \emph{(interest)} \(\blc{\Vx[t]{}[(j)]\delta_t\dd{t}}\)
+is earned and added to the reserve for state \(j\).
+\item \faIcon{plus-circle} \emph{(premium less expense)}
+\((\gc{G_t^{(j)}}-\rc{e_t^{(j)}})\dd{t}\) is received and added to the reserve
+for state \(j\).
+
+\item \faIcon{minus-circle} \emph{(annuity benefit payment)}
+\brc{\(R_t^{(j)}\dd{t}\)} is paid in the time interval \([t,t+\dd{t}]\) and
+subtracted from the reserve for state \(j\).
+\item \faIcon{minus-circle} \emph{(provision for ``NAAR'')} \\
+\(\vc{\sum_{j\ne i}^{}\underbrace{\qty(S_{t}^{(jk)}+E_{t}^{(jk)}+\Vx[t]{}[(k)]-\Vx[t]{}[(j)])}_{\text{``NAAR''}}
+\underbrace{\mu_{x+t}^{jk}\dd{t}}_{\mathclap{\text{``prob.''\ for \(j\to k\) in \([t,t+\dd{t}]\)}}}}\)
+is subtracted from the reserve for state \(j\).
+\end{itemize}
+\end{enumerate}
+\emph{(If you are interested)} \begin{remark}
+\item The reason why only insurance type benefit ``\(S_t^{(jk)}\)'' appears in
+the ``NAAR'', but not the total benefit \(B_{t}^{(k)}\), is that the amount of
+annuity type benefit within the ``infinitesimal'' time interval
+\([t,t+\dd{t}]\) is ``extremely small''. When multiplied by the also
+``extremely small'' quantity \(\mu_{x+t}^{jk}\dd{t}\), its contribution would
+be negligible.
+
+\item The ``payments'' part (the fourth ``factor'') includes only the annuity
+type benefit \brc{\(R_t^{(j)}\dd{t}\)}, without the insurance type benefit and
+the associated settlement expense. This is because for the insurance type
+benefit to be triggered in the ``infinitesimal'' time interval
+\([t,t+\dd{t}]\), at least \emph{two} changes in states need to occur within
+the interval: The life currently in state \(j\) needs to at least first go to
+another state, and then enter back state \(j\). The chance of having such event
+is ``negligible''\footnote{This is indeed related to an omitted assumption for
+the continuous-time multiple state model. But this should be ``reasonable'' as
+it is ``extremely unlikely'' for two changes in states to occur
+``simultaneously'' (within the same ``infinitesimal'' time interval).}, so the
+terms for insurance type benefit and its associated settlement expense can be
+dropped.
+\end{remark}
+\item \textbf{Euler's method.} Again, we can apply the \emph{Euler's method} to
+apply the Thiele's differential equation here in practice. Recall the formulas
+are:
+\begin{itemize}
+\item \emph{Forward approximation:} Change \(\displaystyle
+\dv{}{t}\Vx[t]{}[]\to\frac{\Vx[t+h]{}[]-\Vx[t]{}[]}{h}\).
+\item \emph{Backward approximation:}  Change \(\displaystyle
+\dv{}{t}\Vx[t]{}[]\to\frac{\Vx[t+h]{}[]-\Vx[t]{}[]}{h}\), \underline{and change
+\(t\to t+h\) on the RHS} (quite many changes would be needed, be careful \warn{}).
+\end{itemize}
 \end{enumerate}
