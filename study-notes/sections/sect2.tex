@@ -124,6 +124,7 @@ without leaving state \blc{\(i\)} in between).} \\
 \item The notations here are not standard actuarial notations.
 \item \(\px[t]{x}[ij]\) and \(\px[t]{x}[\overline{ii}]\) are called
 \defn{transition probability} and \defn{occupancy probability} respectively.
+\item The ``\(t\)''s in the notations can be dropped when \(t=1\).
 \end{remark}
 
 Examples: In the alive-dead model,
@@ -223,12 +224,12 @@ variant of law of total probability/expectation:
 \begin{itemize}
 \item \emph{(probability)}
 \[
-\boxed{p_{ij}\triangleq\prob{\text{ever visit state \(j\)}|\text{start in state \(i\)}}
+\boxed{p_{ij}:=\prob{\text{ever visit state \(j\)}|\text{start in state \(i\)}}
 =\sum_{\text{all states \(k\)}}^{}\prob{\text{\gc{first step} \(i\to k\)}}\times p_{kj}}.
 \]
 \item \emph{(expectation)}
 \begin{align*}
-\boxed{e_{ij}}&\triangleq\expv{\text{time spent in state \(j\)}|\text{start in state \(i\)}} \\
+\boxed{e_{ij}}&:=\expv{\text{time spent in state \(j\)}|\text{start in state \(i\)}} \\
 &=\boxed{\sum_{\text{all states \(k\)}}^{}\prob{\text{\gc{first step} \(i\to k\)}}
 \qty(e_{kj}+\delta_{ij})}
 \end{align*}
@@ -859,6 +860,7 @@ discount factor is \vc{\(1\)} and the probability of having this payment is
 \mgc{\(1\)} (as the life is known to be in state \(j\) now).
 \end{enumerate}
 \subsection{Premium and Policy Value Calculations}
+\label{subsect:mult-state-prem-pv}
 \begin{enumerate}
 \item Using the formulas for various insurance and annuity EPVs in
 \Cref{subsect:mult-state-insur-ann-epv}, we can compute net/gross premiums via
@@ -951,7 +953,7 @@ the amount of annuity type benefit.
 \end{itemize}
 \item \(E_{t+1}^{(k)}\): amount of the settlement expense associated to the
 \underline{insurance type} benefit payable \faIcon{at} time \(t+1\) for life
-\underline{in state \(k\)} at that time (as suggested above)
+\underline{in state \(k\)} at that time
 \end{itemize}
 
 This generalizes the basic policy recursive formula \((\Vx[t]{}+G_t-e_t)(1+i)=
@@ -1118,7 +1120,7 @@ differential equation} in multiple state model setting is given by
 \]
 where:
 \begin{itemize}
-\item \(R_t^{(j)}\) is the time-\(t\) \emph{rate} of \underline{annuity type}
+\item \(R_t^{(j)}\) is the time-\(t\) \underline{r}ate of \underline{annuity type}
 benefit payments (with the associated expenses added, if any) while the life in
 state \(j\).
 \item \(G_t^{(j)}\) and \(e_t^{(j)}\) are the time-\(t\) rates of premium
