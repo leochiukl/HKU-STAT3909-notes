@@ -1,6 +1,545 @@
 \section{Profit Analysis}
 \label{sect:profit-analysis}
 \begin{enumerate}
-\item 
+\item The profit analysis in \Cref{sect:profit-analysis} can be divided into
+two types:
+\begin{enumerate}[label={(\arabic*)}]
+\item \emph{Classifying profits by sources:} While the profit amount can be
+obtained by a simple ``\(\text{revenue}-\text{cost}\)'', the insurer would also
+like to know the \emph{contributions} to the profits from different factors,
+e.g. interest and mortality. Here we will discuss a method to do that.
+
+\item \emph{(Main focus)} \emph{Testing the profits under different scenarios:}
+Also known as \defn{profit testing}, here we are investigating the impacts on
+the evolution of future net cash flows and emergence of profits upon changes in
+assumptions made (e.g., interest and mortality assumptions). Profit testing is
+an application of \emph{scenario analysis} (learnt in STAT3904) in a life
+contingencies context.
+
+While the primary purpose of profit testing is to determine the profitability
+of various products offered by the insurer, it can actually help us to perform
+core actuarial functions, namely \emph{pricing} and \emph{reserving}, which
+raises actuaries' interest in this topic.
+\end{enumerate}
+\begin{note}
+Throughout \Cref{sect:profit-analysis}, we shall focus on discussing the
+profit analysis of insurance products.
+\end{note}
+\end{enumerate}
+\subsection{Classification of Profits by Sources}
+\label{subsect:classify-profits}
+\begin{enumerate}
+\item Recall the basic policy value recursion formula we learn from STAT3901:
+\[
+\underbrace{(\Vx[t]{}+G_t-e_t)(1+i)}_{\text{what you have}}=
+\underbrace{\qx{x+t}(S_{t+1}+E_{t+1})+\px{x+t}(\Vx[t+1]{}[])}_{\text{what you need (expected)}}
+\]
+(\(t\) is an integer time). Intuitively, it can be interpreted as saying that
+``what you have is what you \emph{expect to} need''. In practice, ``what
+you \emph{actually} need'' \faIcon{at} time \(t+1\) would almost always
+differ from your expectation, like many things in real life. In fact, since
+``what you have'' is calculated based on assumptions (e.g., interest rate),
+even ``what you \emph{actually} have'' could be different from what you
+calculated, when your assumptions do not match exactly with the actual
+experience!
+
+The difference \(\text{``what you \emph{actually} have''}-\text{``what you
+\emph{actually} need''}\) is indeed the \emph{actual} profit from
+the policy; It is good \faIcon[regular]{thumbs-up} for ``what you
+\emph{actually} have'' to exceed ``what you \emph{actually} need'',
+as you can keep some amount of ``what you have'' as profit
+\faIcon[regular]{grin-beam}.  On the other hand, it is bad
+\faIcon[regular]{thumbs-down} for ``what you \emph{actually} need'' to
+exceed ``what you \emph{actually} have'', since it means that you have no
+choice but to use ``your own money'' to cover the shortfall, resulting in a
+loss \faIcon[regular]{sad-tear}!
+
+\item \textbf{Notations.} Let us now introduce some notations related to profit
+calculations:
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Notation&Meaning\\
+\midrule
+\(\lx{x+t}[\mathrm{actual}]\)&actual number of ``survivors'' \faIcon{at} time \(t\) \\
+\(i_{t}^{\mathrm{actual}}\)&actual annual effective interest rate \faIcon{at} time \(t\) \\
+\(e_t^{\mathrm{actual}}\)&sum of actual initial and renewal expenses (per policy) \faIcon{at} time \(t\)\\
+\(E_{t+1}^{\mathrm{actual}}\)&actual settlement expense (per policy) \faIcon{at} time \(t+1\)\\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{remark}
+\item Like the asset shares case in \Cref{subsect:asset-shares}, ``survivors''
+actually mean policies in force, or ``surviving policies''. But sometimes we
+still use the term ``survivors'' to simplify wordings.
+\item For other types of quantities like sum insured and premiums, we assume
+that they are fixed throughout the whole policy term and do not depend on the
+actual experience.
+\end{remark}
+
+\item \textbf{Total amount of profits.} Before performing the classification,
+we need to first calculate the total amount of profits, which is given by:
+\[
+\lx{x+t}[\vc{\mathrm{actual}}]\bigg(
+\underbrace{(\Vx[t]{}+G_t-e_t^{\vc{\mathrm{actual}}})(1+i_t^{\vc{\mathrm{actual}}})}_{\text{what you \vc{actually} have}}
+-\underbrace{\qx{x+t}^{\vc{\mathrm{actual}}}(S_{t+1}+E_{t+1}^{\vc{\mathrm{actual}}})
++\px{x+t}^{\vc{\mathrm{actual}}}(\Vx[t+1]{}[])}_{\text{what you \vc{actually} need}}
+\bigg)
+\]
+where
+\(\px{x+t}^{\vc{\mathrm{actual}}}=\lx{x+t+1}[\vc{\mathrm{actual}}]/\lx{x+t}[\vc{\mathrm{actual}}]\)
+and \(\qx{x+t}^{\vc{\mathrm{actual}}}=1-\px{x+t}^{\vc{\mathrm{actual}}}\).
+
+\item\label{it:classify-profits} \textbf{Classifying profits by sources.} Now
+we introduce one method to decompose the total profit into several components,
+each for one source.  The key idea is as follows:
+\[
+\text{Profit due to \(\square\)}
+=\text{Profit with actual \(\square\)}
+-\text{Profit with assumed \(\square\)}
+\]
+where \(\square\) stands for ``interest'', ``mortality'', or ``expense''.
+
+More specifically, we are decomposing the total profit as follows:
+\begin{align*}
+\text{Total profit}&=\text{Profit with all actual quantities}-\overbrace{\text{Profit with all assumed quantities}}^{\text{always \(0\)}} \\
+&=\text{Profit with actual interest, expenses \& mortality}\vc{-\text{Profit with actual interest \& expenses}} \\
+&\quad\vc{+\text{Profit with actual interest \& expenses}}\gc{-\text{Profit with actual interest}} \\
+&\quad\gc{+\text{Profit with actual interest}}-\text{Profit with all assumed quantities} \\
+&=\text{Profit due to mortality} \\
+&\quad+\text{Profit due to expenses} \\
+&\quad+\text{Profit due to interest}.
+\end{align*}
+While this decomposition is intuitively appealing, it actually has one major
+limitation \warn{}, namely that the profits due to various sources obtained
+\emph{depend on the ``order'' of classifications}. In the case above, the
+``order'' would be
+\[
+\text{Interest}\to\text{Expenses}\to\text{Mortality}
+\]
+which refers to the order for converting the assumed quantity to the actual
+one, starting from the ``all assumed quantities'' case:
+\begin{itemize}
+\item \(\text{Profit due to interest}=\text{Profit with actual interest}-\text{Profit with all assumed quantities}\) \\
+(we convert assumed interest to actual interest here).
+\item \(\text{Profit due to expenses}=\text{Profit with actual interest \& expenses}
+-\text{Profit with actual interest}\) \\
+(we convert assumed expenses to actual expenses here).
+\begin{warning}
+Make sure you consider \underline{all} kinds of expenses: initial, renewal, and
+settlement expenses.
+\end{warning}
+\item \(\text{Profit due to mortality}=\text{Profit with actual int., exp. \& mortality}
+-\text{Profit with actual int. \& exp.}\) \\
+(we convert assumed mortality to actual mortality here).
+\end{itemize}
+
+The values obtained could be different if we decompose the profits in the
+following order instead
+(\(\text{Mortality}\to\text{Expenses}\to\text{Interest}\)):
+\begin{align*}
+\text{Total profit}&=\text{Profit with actual interest, expenses \& mortality}-\text{Profit with actual \rc{mortality} \& expenses} \\
+&\quad+\text{Profit with actual \rc{mortality} \& expenses}-\text{Profit with actual \rc{mortality}} \\
+&\quad+\text{Profit with actual \rc{mortality}}-\text{Profit with all assumed quantities}.
+\end{align*}
+\item \textbf{Shortcuts for decomposing profits.} Some shortcuts are available
+when we decompose the profits as above, due to cancellations of terms. To
+illustrate them, let us use the decomposition in the order
+\(\text{Interest}\to\text{Expenses}\to\text{Mortality}\) as an example:
+\begin{itemize}
+\item \emph{Profit due to interest:}
+\begin{align*}
+&\text{Profit with actual interest}-\overbrace{\text{Profit with all assumed quantities}}^{0} \\
+&=\quad\lx{x+t}[\mathrm{actual}]\bigg(
+(\Vx[t]{}+G_t-e_t)(1+i_t^{\vc{\mathrm{actual}}})
+-\qx{x+t}(S_{t+1}+E_{t+1})
++\px{x+t}(\Vx[t+1]{}[])\bigg).
+\end{align*}
+
+\item \emph{Profit due to expenses:}
+\begin{align*}
+&\text{Profit with actual interest \& expenses}
+-\text{Profit with actual interest} \\
+&=\quad\lx{x+t}[\mathrm{actual}]\bigg(
+(\Vx[t]{}+G_t-e_t^{\vc{\mathrm{actual}}})(1+i_t^{\vc{\mathrm{actual}}})
+-\qx{x+t}(S_{t+1}+E_{t+1}^{\vc{\mathrm{actual}}})
++\px{x+t}(\Vx[t+1]{}[])\bigg) \\
+&\quad-\lx{x+t}[\mathrm{actual}]\bigg(
+(\Vx[t]{}+G_t-e_t)(1+i_t^{\vc{\mathrm{actual}}})
+-\qx{x+t}(S_{t+1}+E_{t+1})
++\px{x+t}(\Vx[t+1]{}[])\bigg) \\
+&=\quad\lx{x+t}[\mathrm{actual}]\bigg[-(e_{t}^{\mathrm{actual}}-e_{t})(1+i_{t}^{\mathrm{actual}})
+-\qx{x+t}(E_{t+1}^{\mathrm{actual}}-E_{t+1})\bigg].
+\end{align*}
+
+\item \emph{Profit due to mortality:}
+\begin{align*}
+&\text{Profit with actual interest,  expenses \& mortality}
+-\text{Profit with actual interest \& expenses} \\
+&\overset{\text{(NAAR form)}}{=}\lx{x+t}[\mathrm{actual}]\bigg(
+(\Vx[t]{}+G_t-e_t^{\vc{\mathrm{actual}}})(1+i_t^{\vc{\mathrm{actual}}})
+-\qx{x+t}[\vc{\mathrm{actual}}](S_{t+1}+E_{t+1}^{\vc{\mathrm{actual}}}-\Vx[t+1]{}[])
++\Vx[t+1]{}[]\bigg) \\
+&\hspace{1.5cm}-\lx{x+t}[\mathrm{actual}]\bigg(
+(\Vx[t]{}+G_t-e_t^{\vc{\mathrm{actual}}})(1+i_t^{\vc{\mathrm{actual}}})
+-\qx{x+t}(S_{t+1}+E_{t+1}^{\vc{\mathrm{actual}}}-\Vx[t+1]{}[])
++\Vx[t+1]{}[]\bigg) \\
+&\hspace{0.8cm}=\quad-\lx{x+t}[\mathrm{actual}](\qx{x+t}[\vc{\mathrm{actual}}]-\qx{x+t})(S_{t+1}+E_{t+1}^{\vc{\mathrm{actual}}}-\Vx[t+1]{}[]).
+\end{align*}
+\end{itemize}
+\begin{note}
+Here we always multiply the per-policy profit by the actual number of policies
+\faIcon{at} time \(t\): ``Actual'' or ``assumed'' mortality is actually
+referring whether \(\px{x+t}[\mathrm{actual}]\) \&
+\(\qx{x+t}[\mathrm{actual}]\) or \(\px{x+t}\) \& \(\qx{x+t}\) should be used.
+\end{note}
+\end{enumerate}
+\subsection{Profit Testing}
+\begin{enumerate}
+\item To conduct profit testing, we will make extensive use of the following
+notations:
+\begin{itemize}
+\item \(E_0\): \defn{pre-contract expense}. This is given by initial expense
+less renewal expense and is conventionally treated as a payment made ``at the
+end of year 0''\footnote{This is in contrast with the first premium payment
+time, which is at the beginning of year 1. Mathematically we can treat them as
+referring to the same time point, but for some terms appearing later, it is
+essential to distinguish them carefully.}.
+
+\item \(e_{t-1}\): renewal expense made at the beginning of year \(t\) (i.e.,
+time \(t-1\)). Note that the initial expense is decomposed into pre-contract
+expense \(E_0\) and ``renewal expense'' \(e_0\) made at the beginning of year 1
+here.
+
+\item \(G_{t-1}\): gross premium payable at the beginning of year \(t\).
+
+\item \(S_t\): death benefit payable at the end of year \(t\) if death occurs
+in that year.
+\item \(i_{\mathrm{acc}}\): annual effective interest rate (or ``accumulation
+rate'') used in the profit testing.
+\end{itemize}
+Armed with these notations, we can now discuss several important quantities
+involved in profit testing.
+\item \label{it:exp-ncf-fmlas} \textbf{Expected net cash flows.} There are two
+kinds of expected net cash flows, which can be distinguished by whether we are
+considering \emph{per policy in-force} or \emph{per policy issued}.
+
+\begin{itemize}
+\item \emph{Per policy in-force (at the start of year \(t\)):} The
+\defn{in-force expected net cash flow} (or \defn{in-force emerging surplus})
+for year \(t\), denoted by \(CF_{t}\), is the expected net cash flow obtained
+by accumulating (at \(i_{\mathrm{acc}}\)) all the (expected) cash flows in year
+\(t\) to the year end:
+\[
+\boxed{CF_{0}=-E_0}\qqtext{and}
+\boxed{CF_{t}=(G_{t-1}-e_{t-1})(1+i_{\mathrm{acc}})-S_t\qx{x+t-1}}\text{ for any \(t=1,2,\dotsc\)}.
+\]
+\begin{center}
+\begin{tikzpicture}
+\draw[-Latex] (0,0) -- (10,0) node[right]{Time};
+\fill[] (3,0) circle [radius=0.05]
+node[below] {\(t-1\)};
+\fill[] (7,0) circle [radius=0.05]
+node[below] {\(t\)};
+\draw[->, ForestGreen, line width=0.3mm] (3,0.6) --node[midway, left]{\faIcon{plus-circle}} (3,0.2)
+node[pos=-0.5]{\(G_{t-1}-e_{t-1}\)};
+\draw[->, red, line width=0.3mm] (7,0.2) --node[midway, right]{\faIcon{minus-circle}} (7,0.6)
+node[pos=1.8] {\(S_{t}\qx{x+t-1}\)};
+\draw[-Latex, blue] (3,0.1) to[bend right] node[midway, auto, swap]{\(\times (1+i_{\mathrm{acc}})\)} (7,0.1);
+\end{tikzpicture}
+\end{center}
+Here we have \(CF_0=-E_0\) since the only (negative) cash flow in ``year 0'' is
+\(-E_0\), corresponding to the pre-contract expense ``at the end of year 0''.
+
+\item \emph{Per policy issued:} The \defn{expected net cash flow per policy
+issued} for year \(t\), denoted by \(EC_{t}\), is given by
+\[
+\boxed{EC_{0}=CF_{0}}\qqtext{and}
+\boxed{EC_{t}}=\frac{\overbrace{\lx{x+t-1}CF_{t}}^{\mathclap{\text{total expected NCF}}}}
+{\underbrace{\lx{x}}_{\mathclap{\text{no.\ of policies issued}}}}=\boxed{\px[t-1]{x}\times CF_{t}}
+\text{ for any \(t=1,2,\dotsc\)}.
+\]
+\end{itemize}
+\item \label{it:exp-profit-fmlas} \textbf{Expected profits.} Again there are
+two kinds of expected profits, which can similarly distinguished by whether
+\emph{per policy in-force} or \emph{per policy issued} is considered.
+\begin{itemize}
+\item \emph{Per policy in-force:} The \defn{in-force expected profit} for year
+\(t\), denoted by \(PR_{t}\), is like the profit we have seen in
+\Cref{subsect:classify-profits}, and can be expressed as \(\text{``what you
+have''}-\text{``what you need''}\), with the latter being expected value:
+\[
+\boxed{PR_{0}=-\underset{\text{(what you need)}}{E_0}}\qqtext{and}
+\boxed{PR_{t}=\underset{\text{(what you have)}}{(\Vx[t-1]{}+G_{t-1}-e_{t-1})(1+i_{\mathrm{acc}})}-
+\underset{\text{(what you need)}}{\qx{x+t-1}(S_{t}+E_{t})+\px{x+t-1}(\Vx[t]{}[])}}
+\]
+for any \(t=1,2,\dotsc\). While it appears that \(PR_{t}\) is always zero for
+any \(t=1,2,\dotsc\) due to the basic policy value recursion formula, it is
+actually not the case \warn{}. The reason is that the profit testing
+interest rate \(i_{\mathrm{acc}}\) may NOT be the same as the interest rate
+used for computing policy values (the one appearing in the recursive formula).
+\item \emph{Per policy issued:} The \defn{expected profit per policy issued}
+for year \(t\), denoted by \(\sigma_t\), is given by
+\[
+\boxed{\sigma_0=PR_{0}}\qqtext{and}
+\boxed{\sigma_{t}}=\frac{\overbrace{\lx{x+t-1}PR_{t}}^{\mathclap{\text{total expected profit}}}}
+{\underbrace{\lx{x}}_{\mathclap{\text{no.\ of policies issued}}}}=\boxed{\px[t-1]{x}\times PR_{t}}
+\text{ for any \(t=1,2,\dotsc\)}.
+\]
+\end{itemize}
+After collecting the in-force expected profits and expected profits per policy
+issued for different years into vectors, there are special names for the
+vectors:
+\begin{itemize}
+\item \defn{Profit vector}: \((PR_{0},PR_{1},\dotsc,PR_{n})\).
+\item \defn{Profit signature}: \((\sigma_{0},\sigma_{1},\dotsc,\sigma_{n})\).
+\end{itemize}
+\begin{note}
+Here we suppose that a policy with \(n\) years term is being considered, so we
+only include the values up to year \(n\).
+\end{note}
+\item \textbf{Relationship between expected net cash flows and profits.}
+There is an interesting relationship between the in-force expected NCF \(CF_t\)
+and the in-force expected profit \(PR_t\) as follows:
+\[
+PR_t=CF_t-\blc{\Vx[t-1]{}[](1+i_{\mathrm{acc}})-\px{x+t-1}(\Vx[t]{}[])}.
+\]
+It is not hard to verify this directly but checking the definitions (try
+this!). The interesting thing about this relationship is that a rather
+intuitive interpretation can be obtained by noting that the \blc{blue}
+expression is the (expected) increase in reserve per policy in-force. Denoting
+it by \(IR_{t}\), we can write \(\boxed{PR_t=CF_t-IR_{t}}\), which can be
+intuitively understood as saying that:
+\[
+\text{profit you have}
+=\underset{\text{(from the NCF)}}{\text{amount \faIcon{dollar-sign} \gc{going into} your pocket}}
+-\underset{\text{(for increasing reserve)}}{\text{amount \faIcon{dollar-sign} \rc{going out of} your pocket}}.
+\]
+\begin{note}
+To see why the \blc{blue} expression is the increase in reserve per policy
+in-force, write
+\[
+\blc{\Vx[t-1]{}[](1+i_{\mathrm{acc}})-\px{x+t-1}(\Vx[t]{}[])}
+=\frac{\overbrace{\lx{x+t-1}\times \Vx[t-1]{}[](1+i_{\mathrm{acc}})-\lx{x+t}\times \Vx[t]{}[]}^{\text{total (expected) increase in reserve}}}
+{\underbrace{\lx{x+t-1}}_{\text{no.\ of policies in-force}}}
+\]
+where we note that the start-of-year reserve \(\Vx[t-1]{}[]\) can earn interest
+at rate \(i_{\mathrm{acc}}\) in year \(t\), and at the end of year \(t\), the
+reserve amount \(\Vx[t]{}[]\) is only for each policy in-force at that time.
+\end{note}
+\item \textbf{Profit measures.} After learning about these important quantities
+involved in profit testing, it is time to actually apply them in profit
+testing.  Here we will do that by using some \emph{profit measures} which, as
+its name suggests, \underline{measure} \underline{profits}. In fact, you should
+have seen some of them back in STAT3904. But we will go through all of them in
+details here, in case you already forget \(\cancel{\text{\faIcon{brain}}}\) the
+STAT3904 content (pretty normal, I guess).
+
+Since our goal here is to measure \underline{profits} per policy
+\underline{issued}\footnote{We want to analyze the profitability right at the
+onset, to decide whether we should offer those products or not at the very
+beginning.}, we will make extensive use of the expected profits \emph{per policy
+issued} \(\sigma_t\)'s. Four profit measures will be discussed here:
+\begin{itemize}
+\item Net present value (NPV)
+\item \emph{(new!)} Profit margin
+\item Discounted payback period (DPP)
+\item Internal rate of return (IRR)
+\end{itemize}
+\begin{note}
+Henceforth we shall consider a policy with \(n\) years term.
+\end{note}
+
+\item \label{it:npv-fmla} \textbf{Net present value.}
+\begin{enumerate}[label={(\arabic*)}]
+\item \emph{Definition:} The \defn{net present value} (NPV) of a policy is the
+sum of all discounted \(\sigma_t\)'s (\faIcon{at} an interest rate \(r\), known
+as the \defn{required rate of return}, \defn{hurdle rate}, or \defn{risk
+discount rate}):
+\[
+\boxed{\text{NPV \faIcon{at} \(r\)}=\sum_{t=0}^{n}\sigma_t(1+r)^{-t}}.
+\]
+\item \emph{Discussion:} We have the following relationships between how we
+set reserves and the emerging pattern of expected profits:
+\begin{itemize}
+\item Setting higher reserves \gc{earlier} \faIcon{arrow-right} Higher \(\sigma_t\)'s emerging \rc{later}
+\item Setting higher reserves \rc{later} \faIcon{arrow-right} Higher \(\sigma_t\)'s emerging \gc{earlier}
+\end{itemize}
+Often, the hurdle rate exceeds the profit testing interest rate, i.e.,
+\(r>i_{\mathrm{acc}}\). In such case, higher \(\sigma_t\)'s emerging
+\gc{earlier} leads to a higher NPV. Hence, setting higher reserves \rc{later}
+would usually result in a higher NPV.
 \end{enumerate}
 
+\item \label{it:profit-marg-fmla} \textbf{Profit margin.}
+The \defn{profit margin} of a policy \faIcon{at} the hurdle rate \(r\) is the
+NPV per expected PV of premiums:
+\[
+\text{Profit margin \faIcon{at} \(r\)}
+=\frac{\overset{\text{(total NPV)}}{\vc{\lx{x}}\times \text{NPV \faIcon{at} \(r\)}}}
+{\underset{\text{(total expected PV of premiums)}}{\sum_{t=0}^{n-1}G_t\times \vc{\lx{x+t}}\times (1+r)^{-t}}}
+=\boxed{\frac{\text{NPV \faIcon{at} \(r\)}}
+{\sum_{t=0}^{n-1}G_t\times \vc{\px[t]{x}}\times (1+r)^{-t}}}.
+\]
+Intuitively, profit margin tells the proportion of premiums earned as profits.
+
+\item\label{it:dpp-fmla} \textbf{Discounted payback period.} The
+\defn{discounted payback period} (DPP) is the earliest time at which the NPV is
+nonnegative:
+\[
+\text{DPP}=\min\{\mgc{k}\in\{0,1,2,\dotsc\}: \text{NPV}_{\mgc{k}}\ge 0\}
+\]
+where \(\text{NPV}_{\mgc{k}}=\sum_{t=0}^{\mgc{k}}\sigma_t(1+r)^{-t}\) is the
+\defn{partial NPV up to time \(k\)}, for any \(k=0,1,\dotsc,n\).
+
+DPP \emph{does not exist} when \(\text{NPV}_{k}<0\) for any
+\(k=0,1,,\dotsc,n\). In such case, it means that the policy ``never pays back''
+and thus it is probably not a good idea to offer such policy.
+
+\item \label{it:irr-fmla} \textbf{Internal rate of return.} The \defn{internal
+rate of return} (IRR) is any interest rate at which the NPV is zero, i.e., any
+value \(i_{\mathrm{IRR}}\) such that \(\text{NPV \faIcon{at} \(i_{\mathrm{IRR}}\)}=0\).
+
+\begin{note}
+There can be no IRR or multiple IRRs. But in general, if the profit signature
+\((\sigma_0,\sigma_1,\dotsc,\sigma_n)\) has exactly one sign change from
+negative to positive, i.e., all negative terms before positive terms, then the
+IRR is uniquely determined.
+\end{note}
+
+\item \textbf{Pricing by profit testing.} Now let us start discussing how we
+can use profit testing to set premiums (pricing) and reserves (reserving). For
+pricing, there can be many ways to utilize the results from profit testing. For
+instance, the insurer may compute the NPV at a fixed hurdle rate for various
+premiums, and set the premium as the \emph{breakeven premium}, i.e., the one
+that leads to a zero NPV. In practice, it may be more feasible with the help of
+a spreadsheet \faIcon{file-excel}.
+
+\item \label{it:zeroization} \textbf{Reserving by profit testing.} The
+discussion about using profit testing to set reserves is more interesting since
+there is a special method to do that, which is known as \emph{zeroization}. As
+you may expect, this method involves some ``zeros''.
+
+\defn{Zeroization} is an iterative process which computes the reserves to be
+set in a backward \faIcon{backward} fashion. Basically, zeroization determines
+reserves that leads to zero profits in later years. Intuitively, this process
+sets ``just enough'' reserves to avoid having excessively high reserves in
+earlier years, which would lead to a lower NPV as suggested in
+\labelcref{it:npv-fmla}.
+
+More specifically, the zeroization process is as follows (for an \(n\)-year
+policy):
+\begin{itemize}
+\item Solve \(PR_{n}=0\) for \(\Vx[n-1]{}[]\) \footnote{It
+is possible since the boundary value \(\Vx[n]{}[]\) is known.} and label it as
+\(\Vx[n-1]{}[Z]\).
+\item Solve \(PR_{n-1}=0\) with
+\(\Vx[n-1]{}[]\to\Vx[n-1]{}[Z]\) for \(\Vx[n-2]{}[]\), and label it as
+\(\Vx[n-2]{}[Z]\).
+\item \(\vdots\)
+\item Solve \(PR_{1}=0\) with \(\Vx[1]{}[]\to\Vx[1]{}[Z]\) for
+\(\Vx[0]{}[]\) and label it as \(\Vx[0]{}[Z]\).
+\begin{warning}
+The time-0 reserve is not necessarily zero!
+\end{warning}
+\end{itemize}
+\begin{remark}
+\item Often the formula \(PR_{t}=CF_{t}-IR_{t}\) is helpful here.
+\item In case a \rc{negative} solution is obtained when solving \(PR_{t}=0\), we
+should set the time-\(t\) reserve \(\Vx[t]{}[Z]\) as \(0\) (because it does not
+make sense to have ``negative reserve''), and \(0\) is the smallest possible
+reserve.
+\item The value \(\Vx[t]{}[Z]\) is known as the time-\(t\) \defn{zeroized reserve}.
+\end{remark}
+
+\item \label{it:mult-state-profit-test-fmlas} \textbf{Profit testing for
+multiple state model.} The last (nice!  \faIcon[regular]{smile-wink}) topic to
+be discussed in \Cref{sect:profit-analysis} relates profit testing with what we
+have learnt in \Cref{sect:mult-state-models}: multiple state model. Here we
+will \emph{generalize} the quantities for profit testing from
+\labelcref{it:exp-ncf-fmlas,it:exp-profit-fmlas}, and the generalized
+quantities can be applied in profit testing through profit measures.
+
+\begin{enumerate}[label={(\arabic*)}]
+\item \emph{Notations:} In multiple state model, we would add superscripts to
+the notations previously used (like what we have done in
+\Cref{subsect:mult-state-prem-pv}), to indicate the states in which the
+quantities are applicable:
+\begin{itemize}
+\item \emph{(pre-contract expense)} \(E_0\) remains unchanged
+\item \emph{(renewal expense)} \(e_{t-1}\to e_{t-1}^{(j)}\)
+\item \emph{(gross premium)} \(G_{t-1}\to G_{t-1}^{(j)}\)
+\item \emph{(death benefit)} \(S_t\to S_t^{(j)}\)
+\item \(i_{\mathrm{acc}}\) remains unchanged (assuming it is the same for every state)
+\item \(CF_{t}\to CF_{t}^{(j)}\)
+\item \(EC_{t}\) remains unchanged
+\item \(PR_{t}\to PR_{t}^{(j)}\)
+\item \(\sigma_{t}\) remains unchanged
+\end{itemize}
+\begin{note}
+We assume the starting state is fixed and clear from context, so we do not add
+superscripts to \(E_0\), \(EC_{t}\), and \(\sigma_t\) as they all only depend
+on the starting state. Without loss of generality, we suppose the starting
+state is \(0\) henceforth.
+\end{note}
+\item \emph{Expected net cash flow...}
+\begin{itemize}
+\item \emph{per policy in-force (in state \(j\)):}
+\[
+CF_{0}^{(0)}=-E_0\qqtext{and}
+CF_{t}^{(j)}=(G_{t-1}^{(j)}-e_{t-1}^{(j)})(1+i_{\mathrm{acc}})-\sum_{k}^{}\px{x+t-1}[jk]S_t^{(k)}\text{ for any \(t=1,2,\dotsc\)}.
+\]
+\begin{center}
+\begin{tikzpicture}
+\draw[-Latex] (0,0) -- (10,0) node[right]{Time};
+\fill[] (3,0) circle [radius=0.05]
+node[below] {\(t-1\)};
+\fill[] (7,0) circle [radius=0.05]
+node[below] {\(t\)};
+\draw[->, ForestGreen, line width=0.3mm] (3,0.6) --node[midway, left]{\faIcon{plus-circle}} (3,0.2)
+node[pos=-0.5]{\(G_{t-1}^{(j)}-e_{t-1}^{(j)}\)};
+\node[draw] (start) at (3,2) {State \(j\)};
+\draw[->, red, line width=0.3mm] (7,0.2) --node[midway, right]{\faIcon{minus-circle}} (7,0.6);
+\foreach \x in {0,1,2}{
+\node[draw] () at (8.2,\fpeval{\x+1}) {State \x};
+\draw[-Latex] (start) --node[midway, red]{\(\px{x+t-1}[j\x]\)} (6.7,\fpeval{\x+1});
+\node[red] () at (7,\fpeval{\x+1}) {\(S_t^{(\x)}\)};
+}
+\draw[-Latex, blue] (3,0.1) to[bend right] node[midway, auto, swap]{\(\times (1+i_{\mathrm{acc}})\)} (7,0.1);
+\end{tikzpicture}
+\end{center}
+\item \emph{per policy issued:}
+
+\[
+EC_{0}=CF_{0}^{(0)}\qqtext{and}
+EC_{t}=\frac{\overbrace{\sum_{j}^{}\lx{x+t-1}^{(j)}CF_{t}^{(j)}}^{\mathclap{\text{total expected NCF}}}}
+{\underbrace{\lx{x}^{(0)}}_{\mathclap{\text{no.\ of policies issued}}}}
+=\sum_{j}^{}\px[t-1]{x}[0j]\times CF_{t}^{(j)}
+\text{ for any \(t=1,2,\dotsc\)}.
+\]
+\begin{note}
+Here \(\lx{x+t-1}^{(j)}\) denotes the expected number of policies in-force in
+state \(j\) \faIcon{at} time \(t-1\).
+\end{note}
+\end{itemize}
+\item \emph{(more important) Expected profit...}
+\begin{itemize}
+\item \emph{per policy in-force (in state \(j\)):}
+\begin{align*}
+&PR_{0}^{(0)}=-\underset{\text{(what you need)}}{E_0}\qqtext{and} \\
+&\boxed{PR_{t}^{(j)}=\underset{\text{(what you have)}}{(\Vx[t-1]{}[(j)]+G_{t-1}^{(j)}-e_{t-1}^{(j)})(1+i_{\mathrm{acc}})}-
+\underset{\text{(what you need)}}{\sum_{k}^{}\px{x+t-1}[jk]\qty(B_{t}^{(k)}+E_{t}^{(k)}+\Vx[t]{}[(k)])}}
+\end{align*}
+for any \(t=1,2,\dotsc\), where \(B_{t}^{(k)}\) and \(E_{t}^{(k)}\) carry the
+meanings from \labelcref{it:mult-state-basic-policy-val-recurs}.
+\item \emph{per policy issued:}
+\[
+\sigma_0=PR_{0}^{(0)}\qqtext{and}
+\boxed{\sigma_{t}}=\frac{\overbrace{\sum_{j}^{}\lx{x+t-1}^{(j)}PR_{t}^{(j)}}^{\mathclap{\text{total expected profit}}}}
+{\underbrace{\lx{x}^{(0)}}_{\mathclap{\text{no.\ of policies issued}}}}
+=\boxed{\sum_{j}^{}\px[t-1]{x}[0j]\times PR_{t}^{(j)}}
+\text{ for any \(t=1,2,\dotsc\)}.
+\]
+\end{itemize}
+\end{enumerate}
+\end{enumerate}

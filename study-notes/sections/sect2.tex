@@ -6,18 +6,21 @@ we are going to cover in
 \Cref{sect:mult-state-models,sect:mult-decr-models,sect:mult-life-models} would
 be the ``main course'', with \Cref{sect:profit-analysis} being the ``dessert''.
 \Cref{sect:mult-state-models,sect:mult-decr-models,sect:mult-life-models}
-is essentially about \emph{generalizing} what we learnt in STAT3901 in several
+are essentially about \emph{generalizing} what we learnt in STAT3901 in several
 ways:
 \begin{itemize}
 \item \emph{\Cref{sect:mult-state-models} (multiple state models):}
 Generalization by classifying people into \underline{multiple states}.
+
 \item \emph{\Cref{sect:mult-decr-models} (multiple decrement models):}
-Generalization by classifying people \emph{dead} into \underline{multiple} ways
-of death (or more properly, \underline{decrement}\footnote{Analogous to the
-remark for asset share in \Cref{subsect:asset-shares}, it is possible for a
-policyholder to exit from the policy without actually dying, e.g., through
-lapsing the policy. So the term ``decrement'' (which refers generally to any
-kind of ``quitting the policy'') is used instead of ``death'' here.}).
+Generalization by classifying people \emph{dead} through
+\underline{multiple} causes of death (or more properly,
+\underline{decrement}\footnote{Analogous to the remark for asset share in
+\Cref{subsect:asset-shares}, it is possible for a policyholder to exit from the
+policy without actually dying, e.g., through lapsing the policy. So the term
+``decrement'' (which refers generally to any kind of ``quitting the policy'')
+is used instead of ``death'' here.}).
+
 \item \emph{\Cref{sect:mult-life-models} (multiple life models):}
 Generalization by incorporating \underline{multiple lives} in a single policy.
 \end{itemize}
@@ -41,7 +44,7 @@ make profits (right?), so certainly this is a topic deserving attention. We put
 it at the last as we are going to apply some concepts learnt in the prior
 sections to the profit analysis. This section is perhaps (?) the easiest part
 in STAT3909 and can be your ``grade saver'' \faIcon{cross}.\footnote{Note
-however that \(\text{``easiest''}\ne\text{``easy''}\). Certainly you still need
+however that \(\text{``easiest''}\ne\text{``easy''}\). Certainly, you still need
 to pay (substantial) effort on studying this section in order for it to
 ``save your grade'' (hopefully).}
 
@@ -500,6 +503,8 @@ represents, the insurance can be interpreted differently, e.g.:
 \item \emph{\(\text{State \(k\)}=\text{Sick}\):} Health insurance
 \item \(\vdots\)
 \end{itemize}
+A typical example of multiple state model used in SOA exam is the
+\emph{Standard Sickness-Death Model}, which looks like the following:
 \begin{center}
 \begin{tikzpicture}
 \node[draw, minimum width=3cm, minimum height=1cm] () at (0,0) {Healthy (0)};
